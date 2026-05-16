@@ -127,6 +127,20 @@ export interface FlowOperator {
 }
 
 /**
+ *  流程记录操作人对象
+ */
+export interface ProcessNodeOperator {
+    // 人员id
+    userId: number;
+    // 人员名称
+    name: string;
+    // 是否流程管理员
+    flowManager:boolean;
+    // 其他属性
+    [key: string]: any;
+}
+
+/**
  *  流程操作记录对象
  */
 export interface History {
@@ -194,7 +208,7 @@ export interface FlowApprovalOperator {
     // 审批动作
     actionName: string;
     // 审批人
-    flowOperator: FlowOperator;
+    flowOperator: ProcessNodeOperator;
 }
 
 /**
