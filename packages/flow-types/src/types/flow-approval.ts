@@ -207,6 +207,8 @@ export interface FlowApprovalOperator {
     approveTime: number;
     // 审批动作
     actionName: string;
+    // 审批类型
+    actionType: string;
     // 审批人
     flowOperator: ProcessNodeOperator;
 }
