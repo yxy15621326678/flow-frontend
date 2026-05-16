@@ -1,5 +1,5 @@
-import {ActionType} from "@/types/flow-design";
-import {DataType} from "@/types/form-type";
+import { ActionType } from "@/types/flow-design";
+import { DataType } from "@/types/form-type";
 
 /**
  * 字段权限类型
@@ -201,14 +201,20 @@ export interface FlowApprovalOperator {
  * 流程节点对象
  */
 export interface ProcessNode {
+    // 记录id
+    id: string;
     // 节点id
     nodeId: string;
     // 节点名称
     nodeName: string;
     // 节点类型
     nodeType: string;
-    // 状态 -1 历史 0 当前 1 未执行
-    state: number;
+    // 审批策略
+    approveStrategy: 'SEQUENCE' | 'MERGE' | 'ANY' | 'RANDOM_ONE';
+    // 审批状态
+    approveState: 'PASS' | 'PROCESSING' | 'PENDING' | 'ERROR';
+    // 人员模式
+    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT';
     // 审批人员
     operators: FlowApprovalOperator[]
 }

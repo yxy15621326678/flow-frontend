@@ -46,7 +46,21 @@ export const FlowNodeHistory: React.FC<FlowNodeHistoryProps> = (props) => {
                     direction="vertical"
                 >
                     {processNodes.map(node => {
-                        const operators = node.operators
+                        const operators = node.operators || [];
+                        const operatorStatregy = node.operatorStrategy;
+                        if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT') {
+                            return (
+                                <Step
+                                    title={node.nodeName}
+                                    description={(
+                                        <>
+                                            {operatorStatregy === 'INITIATOR_SELECT' ? '发起人选择审批人' : '审批人选择审批人'}
+                                        </>
+                                    )}
+                                    status={getNodeStatus(node)}
+                                />
+                            )
+                        }
                         return (
                             <Step
                                 title={node.nodeName}
@@ -54,7 +68,7 @@ export const FlowNodeHistory: React.FC<FlowNodeHistoryProps> = (props) => {
                                     <>
                                         {operators.map(operator => {
                                             return (
-                                                <FlowOperatorItem operator={operator} state={node.state}/>
+                                                <FlowOperatorItem operator={operator} approveState={node.approveState}/>
                                             )
                                         })}
                                     </>
