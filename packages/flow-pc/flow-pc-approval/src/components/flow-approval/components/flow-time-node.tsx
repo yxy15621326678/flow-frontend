@@ -43,6 +43,20 @@ export const getNodeStatus = (node: ProcessNode): 'completed' | 'current' | 'pen
     return 'pending';
 };
 
+
+export const getOperatorTitle = (node: ProcessNode)=>{
+    const operatorStatregy = node.operatorStrategy;
+    if(operatorStatregy === 'INITIATOR_SELECT') {
+        return '发起人选择审批人';
+    }
+    if(operatorStatregy === 'APPROVER_SELECT') {
+        return '审批人选择审批人';
+    }
+    if(operatorStatregy === 'NO_OPERATOR') {
+        return node.nodeName;
+    }
+}
+
 interface FlowTimeNodeProps {
     node: ProcessNode;
 }
@@ -95,7 +109,7 @@ export const FlowTimeNode: React.FC<FlowTimeNodeProps> = (props) => {
     const node = props.node;
     const operators = node.operators || [];
     const operatorStatregy = node.operatorStrategy;
-    if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT') {
+    if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT' || operatorStatregy === 'NO_OPERATOR') {
         return (
             <div style={{display: 'flex', flexDirection: 'column', gap: 4, width: '100%'}}>
                 <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
@@ -105,7 +119,7 @@ export const FlowTimeNode: React.FC<FlowTimeNodeProps> = (props) => {
                     </Tag>
                 </div>
                 <Text type="secondary" style={{fontSize: 12}}>
-                    {operatorStatregy === 'INITIATOR_SELECT' ? '发起人选择审批人' : '审批人选择审批人'}
+                    {getOperatorTitle(node)}
                 </Text>
             </div>
         )

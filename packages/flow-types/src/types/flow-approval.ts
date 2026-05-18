@@ -230,7 +230,7 @@ export interface ProcessNode {
     // 审批状态
     approveState: 'PASS' | 'PROCESSING' | 'PENDING' | 'ERROR';
     // 人员模式
-    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT';
+    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT' |'NO_OPERATOR';
     // 审批人员
     operators: FlowApprovalOperator[]
 }

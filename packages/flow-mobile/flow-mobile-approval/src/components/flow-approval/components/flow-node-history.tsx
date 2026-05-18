@@ -15,6 +15,19 @@ interface FlowNodeHistoryProps {
 }
 
 
+export const getOperatorTitle = (node: ProcessNode)=>{
+    const operatorStatregy = node.operatorStrategy;
+    if(operatorStatregy === 'INITIATOR_SELECT') {
+        return '发起人选择审批人';
+    }
+    if(operatorStatregy === 'APPROVER_SELECT') {
+        return '审批人选择审批人';
+    }
+    if(operatorStatregy === 'NO_OPERATOR') {
+        return node.nodeName;
+    }
+}
+
 export const FlowNodeHistory: React.FC<FlowNodeHistoryProps> = (props) => {
     const {context} = useApprovalContext();
     const [processNodes, setProcessNodes] = React.useState<ProcessNode[]>([]);
@@ -48,13 +61,13 @@ export const FlowNodeHistory: React.FC<FlowNodeHistoryProps> = (props) => {
                     {processNodes.map(node => {
                         const operators = node.operators || [];
                         const operatorStatregy = node.operatorStrategy;
-                        if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT') {
+                        if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT' || operatorStatregy === 'NO_OPERATOR') {
                             return (
                                 <Step
                                     title={node.nodeName}
                                     description={(
                                         <>
-                                            {operatorStatregy === 'INITIATOR_SELECT' ? '发起人选择审批人' : '审批人选择审批人'}
+                                            {getOperatorTitle(node)}
                                         </>
                                     )}
                                     status={getNodeStatus(node)}
