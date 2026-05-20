@@ -4,11 +4,11 @@ import dayjs from "dayjs";
 
 // 获取节点状态
 export const getNodeStatus = (node: ProcessNode): 'finish' | 'process' | 'wait' => {
-    if (node.state === -1) {
+    if (node.approveState === 'PASS') {
         return 'finish';
     }
     // 非历史节点，检查是否有审批人
-    if (node.state === 0) {
+    if (node.approveState === 'PROCESSING') {
         return 'process';
     }
     return 'wait';
@@ -16,14 +16,14 @@ export const getNodeStatus = (node: ProcessNode): 'finish' | 'process' | 'wait' 
 
 interface FlowOperatorItemProps {
     operator: FlowApprovalOperator;
-    state: number;
+    approveState: string;
 }
 
 export const FlowOperatorItem: React.FC<FlowOperatorItemProps> = (props) => {
     const operator = props.operator;
-    const state = props.state;
+    const approveState = props.approveState;
 
-    if (state === -1) {
+    if (approveState === 'PASS') {
         return (
             <>
                 <div  style={{fontSize: 12}}>

@@ -103,7 +103,6 @@ export class WorkflowFormManager {
         } else {
             return {
                 ...this.form,
-                fields: list,
                 subForms: this.form.subForms.map(item => {
                     if (item.code === formCode) {
                         return {

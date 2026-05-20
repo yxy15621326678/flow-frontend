@@ -1,5 +1,5 @@
-import {ActionType} from "@/types/flow-design";
-import {DataType} from "@/types/form-type";
+import { ActionType } from "@/types/flow-design";
+import { DataType } from "@/types/form-type";
 
 /**
  * 字段权限类型
@@ -127,6 +127,20 @@ export interface FlowOperator {
 }
 
 /**
+ *  流程记录操作人对象
+ */
+export interface ProcessNodeOperator {
+    // 人员id
+    userId: number;
+    // 人员名称
+    name: string;
+    // 是否流程管理员
+    flowManager:boolean;
+    // 其他属性
+    [key: string]: any;
+}
+
+/**
  *  流程操作记录对象
  */
 export interface History {
@@ -193,22 +207,30 @@ export interface FlowApprovalOperator {
     approveTime: number;
     // 审批动作
     actionName: string;
+    // 审批类型
+    actionType: string;
     // 审批人
-    flowOperator: FlowOperator;
+    flowOperator: ProcessNodeOperator;
 }
 
 /**
  * 流程节点对象
  */
 export interface ProcessNode {
+    // 记录id
+    id: string;
     // 节点id
     nodeId: string;
     // 节点名称
     nodeName: string;
     // 节点类型
     nodeType: string;
-    // 状态 -1 历史 0 当前 1 未执行
-    state: number;
+    // 审批策略
+    approveStrategy: 'SEQUENCE' | 'MERGE' | 'ANY' | 'RANDOM_ONE';
+    // 审批状态
+    approveState: 'PASS' | 'PROCESSING' | 'PENDING' | 'ERROR';
+    // 人员模式
+    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT' |'NO_OPERATOR';
     // 审批人员
     operators: FlowApprovalOperator[]
 }
@@ -225,6 +247,8 @@ export interface NodeOption {
     type: string;
     // 展示节点
     display: boolean;
+    // 可选人员范围（发起人/审批人设定时返回）；为空或缺省表示不限范围，可选任意人
+    operators?: ProcessNodeOperator[];
 }
 
 /**

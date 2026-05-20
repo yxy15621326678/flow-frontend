@@ -33,15 +33,29 @@ export const getStatusConfig = (status: 'completed' | 'current' | 'pending') => 
 
 // 获取节点状态
 export const getNodeStatus = (node: ProcessNode): 'completed' | 'current' | 'pending' => {
-    if (node.state === -1) {
+    if (node.approveState === 'PASS') {
         return 'completed';
     }
     // 非历史节点，检查是否有审批人
-    if (node.state === 0) {
+    if (node.approveState === 'PROCESSING') {
         return 'current';
     }
     return 'pending';
 };
+
+
+export const getOperatorTitle = (node: ProcessNode)=>{
+    const operatorStatregy = node.operatorStrategy;
+    if(operatorStatregy === 'INITIATOR_SELECT') {
+        return '发起人选择审批人';
+    }
+    if(operatorStatregy === 'APPROVER_SELECT') {
+        return '审批人选择审批人';
+    }
+    if(operatorStatregy === 'NO_OPERATOR') {
+        return node.nodeName;
+    }
+}
 
 interface FlowTimeNodeProps {
     node: ProcessNode;
@@ -50,14 +64,14 @@ interface FlowTimeNodeProps {
 
 interface FlowOperatorItemProps {
     operator: FlowApprovalOperator;
-    state: number;
+    approveState: string;
 }
 
 const FlowOperatorItem: React.FC<FlowOperatorItemProps> = (props) => {
     const operator = props.operator;
-    const state = props.state;
+    const approveState = props.approveState;
 
-    if (state === -1) {
+    if (approveState === 'PASS') {
         return (
             <>
                 <Text type="secondary" style={{fontSize: 12}}>
@@ -94,6 +108,23 @@ const FlowOperatorItem: React.FC<FlowOperatorItemProps> = (props) => {
 export const FlowTimeNode: React.FC<FlowTimeNodeProps> = (props) => {
     const node = props.node;
     const operators = node.operators || [];
+    const operatorStatregy = node.operatorStrategy;
+    if(operatorStatregy === 'INITIATOR_SELECT' || operatorStatregy === 'APPROVER_SELECT' || operatorStatregy === 'NO_OPERATOR') {
+        return (
+            <div style={{display: 'flex', flexDirection: 'column', gap: 4, width: '100%'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                    <Text strong style={{fontSize: 14}}>{node.nodeName}</Text>
+                    <Tag color={getStatusConfig(getNodeStatus(node)).color} style={{margin: 0}}>
+                        {getStatusConfig(getNodeStatus(node)).label}
+                    </Tag>
+                </div>
+                <Text type="secondary" style={{fontSize: 12}}>
+                    {getOperatorTitle(node)}
+                </Text>
+            </div>
+        )
+    }
+    
     return (
         <div style={{display: 'flex', flexDirection: 'column', gap: 4, width: '100%'}}>
             <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
@@ -107,7 +138,7 @@ export const FlowTimeNode: React.FC<FlowTimeNodeProps> = (props) => {
                     <FlowOperatorItem
                         key={operator.flowOperator.id}
                         operator={operator}
-                        state={node.state}
+                        approveState={node.approveState}
                     />
                 )
             })}
