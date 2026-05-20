@@ -247,6 +247,8 @@ export interface NodeOption {
     type: string;
     // 展示节点
     display: boolean;
+    // 可选人员范围（发起人/审批人设定时返回）；为空或缺省表示不限范围，可选任意人
+    operators?: ProcessNodeOperator[];
 }
 
 /**

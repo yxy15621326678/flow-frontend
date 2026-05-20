@@ -37,6 +37,14 @@ export const OperatorSelectView: React.FC<OperatorSelectViewPlugin> = (props) =>
         setVisible(false);
     }
 
+    // 有可选范围的节点默认全选：把范围内人员 ID 预填进输入框
+    const initialValues = props.options.reduce<Record<string, string>>((acc, option) => {
+        if (option.operators && option.operators.length > 0) {
+            acc[option.id] = option.operators.map(o => o.userId).join(',');
+        }
+        return acc;
+    }, {});
+
     return (
         <Modal
             title={"请选择操作人"}
@@ -55,22 +63,29 @@ export const OperatorSelectView: React.FC<OperatorSelectViewPlugin> = (props) =>
                 form={form}
                 onFinish={handleFinish}
                 layout="vertical"
+                initialValues={initialValues}
             >
-                {props.options.map(option => (
-                    <Form.Item
-                        key={option.id}
-                        name={option.id}
-                        label={`${option.name} - 操作人`}
-                        rules={[
-                            {
-                                required: true,
-                                message: `请为 ${option.name} 指定操作人`
-                            }
-                        ]}
-                    >
-                        <Input placeholder={"请输入操作人ID，多个用逗号分隔"}/>
-                    </Form.Item>
-                ))}
+                {props.options.map(option => {
+                    const rangeHint = option.operators && option.operators.length > 0
+                        ? `可选：${option.operators.map(o => `${o.name}(${o.userId})`).join('、')}`
+                        : undefined;
+                    return (
+                        <Form.Item
+                            key={option.id}
+                            name={option.id}
+                            label={`${option.name} - 操作人`}
+                            extra={rangeHint}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: `请为 ${option.name} 指定操作人`
+                                }
+                            ]}
+                        >
+                            <Input placeholder={"请输入操作人ID，多个用逗号分隔"}/>
+                        </Form.Item>
+                    );
+                })}
             </Form>
         </Modal>
     )

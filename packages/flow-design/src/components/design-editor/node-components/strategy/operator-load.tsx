@@ -11,11 +11,6 @@ const SELECT_TYPE_OPTIONS = [
     {label: '审批人设定', value: 'APPROVER_SELECT'},
 ];
 
-const SELECT_TYPE_LABEL_MAP: Record<string, string> = {
-    'INITIATOR_SELECT': '发起人设定',
-    'APPROVER_SELECT': '审批人设定',
-};
-
 /**
  * 操作人配置策略
  * @constructor
@@ -53,18 +48,13 @@ export const OperatorLoadStrategy:React.FC = () => {
             <Field
                 name="OperatorLoadStrategy.selectType"
                 render={({ field: { value: selectType } }: FieldRenderProps<any>) => {
-                    if (selectType && selectType !== 'SCRIPT') {
-                        return (
-                            <Form.Item label={"当前操作人"}>
-                                <span>{SELECT_TYPE_LABEL_MAP[selectType] || selectType}</span>
-                            </Form.Item>
-                        );
-                    }
+                    // 发起人/审批人设定模式下，复用脚本配置能力设定「可选人员范围」（留空表示不限范围）
+                    const isRangeMode = selectType === 'INITIATOR_SELECT' || selectType === 'APPROVER_SELECT';
                     return (
                         <Form.Item
-                            label={"当前操作人"}
+                            label={isRangeMode ? "设定人员范围" : "当前操作人"}
                             name={["OperatorLoadStrategy","script"]}
-                            tooltip={"设定流程的审批人"}
+                            tooltip={isRangeMode ? "设定可选人员范围，留空表示不限范围（可选任意人）" : "设定流程的审批人"}
                         >
                             <Field
                                 name="OperatorLoadStrategy.script"
