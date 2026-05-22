@@ -57,7 +57,7 @@ export const BranchAdderRender: React.FC<BranchAdderProps> = (props) => {
             <NodeHeader
                 iconEnable={true}
                 style={{
-                    width: 120
+                    width: 160
                 }}/>
             <Button type={'link'} disabled={canAddBranch} onClick={handleAddBranch}>{props.buttonText}</Button>
         </div>

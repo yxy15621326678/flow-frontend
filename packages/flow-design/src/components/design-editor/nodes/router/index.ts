@@ -1,6 +1,5 @@
 import {FlowNodeRegistry} from '../../typings';
 import {formMeta} from './form-meta';
-import {nanoid} from "nanoid";
 
 export const RouterNodeRegistry: FlowNodeRegistry = {
     type: 'ROUTER',
@@ -17,7 +16,7 @@ export const RouterNodeRegistry: FlowNodeRegistry = {
     canAdd(ctx, from) {
         // 上级节点是 CONDITION_BRANCH 则可以添加 ROUTER 节点
         while (from.parent) {
-            if (from.parent.flowNodeType === 'CONDITION_BRANCH') {
+            if (from.parent.flowNodeType === 'CONDITION_BRANCH'|| from.parent.flowNodeType === 'CONDITION_ELSE_BRANCH') {
                 return true;
             }
             from = from.parent;

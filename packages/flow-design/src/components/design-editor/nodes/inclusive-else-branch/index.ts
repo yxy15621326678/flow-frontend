@@ -9,9 +9,6 @@ export const InclusiveElseBranchNodeRegistry: FlowNodeRegistry = {
         addDisable: true,
         sidebarDisable:true,
         deleteDisable: true,
-        style:{
-            width: '100%',
-        }
     },
     info: {
         icon: 'INCLUSIVE_ELSE_BRANCH',

@@ -22,73 +22,51 @@ interface NodeIconProps {
     type: NodeType;
 }
 
+type AntdIcon = React.ComponentType<{ style?: React.CSSProperties }>;
+
+const ICON_MAP: Partial<Record<NodeType, AntdIcon>> = {
+    APPROVAL: AuditOutlined,
+    CONDITION: BranchesOutlined,
+    CONDITION_BRANCH: BranchesOutlined,
+    CONDITION_ELSE_BRANCH: BranchesOutlined,
+    DELAY: ClockCircleOutlined,
+    END: PoweroffOutlined,
+    HANDLE: EditOutlined,
+    MANUAL: UserOutlined,
+    MANUAL_BRANCH: UserOutlined,
+    INCLUSIVE: MergeOutlined,
+    INCLUSIVE_BRANCH: MergeOutlined,
+    INCLUSIVE_ELSE_BRANCH: MergeOutlined,
+    NOTIFY: BellOutlined,
+    PARALLEL: NodeExpandOutlined,
+    PARALLEL_BRANCH: NodeExpandOutlined,
+    ROUTER: PullRequestOutlined,
+    START: StarOutlined,
+    SUB_PROCESS: ShareAltOutlined,
+    TRIGGER: ApiOutlined,
+};
+
 export const NodeIcon: React.FC<NodeIconProps> = (props) => {
-    const icon = props.type as NodeType;
     const {token} = theme.useToken();
-    const style = {
-        fontSize: 18,
+
+    const IconComponent = props.type ? ICON_MAP[props.type] : undefined;
+    if (!IconComponent) return null;
+
+    const wrapperStyle: React.CSSProperties = {
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 20,
+        height: 20,
         marginRight: 4,
         marginLeft: 4,
-        color: token.colorPrimary
-    }
-    if (!icon) return null;
-    if (icon === 'APPROVAL') {
-        return <AuditOutlined style={style}/>
-    }
-    if (icon === 'CONDITION') {
-        return <BranchesOutlined style={style}/>
-    }
-    if (icon === 'CONDITION_BRANCH') {
-        return <BranchesOutlined style={style}/>
-    }
-    if (icon === 'CONDITION_ELSE_BRANCH') {
-        return <BranchesOutlined style={style}/>
-    }
-    if (icon === 'DELAY') {
-        return <ClockCircleOutlined style={style}/>
-    }
-    if (icon === 'END') {
-        return <PoweroffOutlined style={style}/>
-    }
-    if (icon === 'HANDLE') {
-        return <EditOutlined style={style}/>
-    }
-    if (icon === 'MANUAL') {
-        return <UserOutlined style={style}/>
-    }
-    if (icon === 'MANUAL_BRANCH') {
-        return <UserOutlined  style={style}/>
-    }
-    if (icon === 'INCLUSIVE') {
-        return <MergeOutlined style={style}/>
-    }
-    if (icon === 'INCLUSIVE_BRANCH') {
-        return <MergeOutlined style={style}/>
-    }
-    if (icon === 'INCLUSIVE_ELSE_BRANCH') {
-        return <MergeOutlined style={style}/>
-    }
-    if (icon === 'NOTIFY') {
-        return <BellOutlined style={style}/>
-    }
-    if (icon === 'PARALLEL') {
-        return <NodeExpandOutlined style={style}/>
-    }
-    if (icon === 'PARALLEL_BRANCH') {
-        return <NodeExpandOutlined style={style}/>
-    }
-    if (icon === 'ROUTER') {
-        return <PullRequestOutlined style={style}/>
-    }
-    if (icon === 'START') {
-        return <StarOutlined  style={style}/>
-    }
-    if (icon === 'SUB_PROCESS') {
-        return <ShareAltOutlined style={style}/>
-    }
-    if (icon === 'TRIGGER') {
-        return <ApiOutlined style={style}/>
-    }
-    return null;
+        borderRadius: 5,
+        background: token.colorPrimaryBg,
+    };
 
-}
+    return (
+        <span style={wrapperStyle}>
+            <IconComponent style={{fontSize: 14, color: token.colorPrimary}}/>
+        </span>
+    );
+};
