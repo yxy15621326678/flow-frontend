@@ -1,11 +1,11 @@
-import React, {useCallback, useMemo, useState} from "react";
-import {Flex, theme} from "antd";
-import {CloseCircleOutlined} from "@ant-design/icons";
-import {NodeFormContext} from "@/components/design-editor/context";
-import {FlowNodeJSON, FlowNodeRegistry} from "@/components/design-editor/typings";
-import {FormRenderProps, useClientContext} from "@flowgram.ai/fixed-layout-editor";
-import {useIsSidebar} from "@/components/design-editor/hooks";
-import {useNodeRenderContext} from "@/components/design-editor/hooks/use-node-render-context";
+import React, { useCallback, useMemo, useState } from "react";
+import { Flex, theme } from "antd";
+import { CloseCircleOutlined } from "@ant-design/icons";
+import { NodeFormContext } from "@/components/design-editor/context";
+import { FlowNodeJSON, FlowNodeRegistry } from "@/components/design-editor/typings";
+import { FormRenderProps, useClientContext } from "@flowgram.ai/fixed-layout-editor";
+import { useIsSidebar } from "@/components/design-editor/hooks";
+import { useNodeRenderContext } from "@/components/design-editor/hooks/use-node-render-context";
 
 interface NodePanelProps {
     children?: React.ReactNode;
@@ -25,13 +25,13 @@ export const NodePanel: React.FC<NodePanelProps> = (props) => {
 
 export const $NodePanel: React.FC<NodePanelProps> = (props) => {
     const [isHovered, setIsHovered] = useState(false);
-    const {node, deleteNode} = useNodeRenderContext();
+    const { node, deleteNode } = useNodeRenderContext();
     const clientContext = useClientContext();
     const registry = node.getNodeRegistry<FlowNodeRegistry>();
     const isSidebar = useIsSidebar();
     const ctx = useClientContext();
-    const {playground} = ctx;
-    const {token} = theme.useToken();
+    const { playground } = ctx;
+    const { token } = theme.useToken();
 
     const canDeleteNode = playground.config.readonlyOrDisabled;
 
@@ -47,7 +47,7 @@ export const $NodePanel: React.FC<NodePanelProps> = (props) => {
     };
 
     const deleteDisabled = useMemo(() => {
-        const {canDelete, meta} = registry;
+        const { canDelete, meta } = registry;
 
         if (typeof canDelete === 'function') {
             return !canDelete(clientContext, node);
@@ -66,7 +66,8 @@ export const $NodePanel: React.FC<NodePanelProps> = (props) => {
             <div
                 style={{
                     width: '100%',
-                    padding: 3
+                    padding: 3,
+                    boxSizing: 'border-box'
                 }}
             >
                 <Flex
@@ -84,7 +85,8 @@ export const $NodePanel: React.FC<NodePanelProps> = (props) => {
         <div
             style={{
                 width: '100%',
-                padding: 3
+                padding: 3,
+                boxSizing: 'border-box'
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
