@@ -85,6 +85,6 @@ export const SidebarRenderer: React.FC<NodeFormPanelProps> = ({ nodeId }) => {
 
 export const nodeFormPanelFactory: PanelFactory<NodeFormPanelProps> = {
   key: 'node-form-panel',
-  defaultSize: 400,
+  defaultSize: 500,
   render: (props: NodeFormPanelProps) => <SidebarRenderer {...props} />,
 };

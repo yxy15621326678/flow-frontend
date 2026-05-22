@@ -10,9 +10,7 @@ export const ConditionElseBranchNodeRegistry: FlowNodeRegistry = {
         addDisable: true,
         deleteDisable: true,
         sidebarDisable:true,
-        style:{
-            width: '100%',
-        }
+        
     },
     info: {
         icon: 'CONDITION_ELSE_BRANCH',

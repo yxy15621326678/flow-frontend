@@ -1,5 +1,4 @@
 import React, {useCallback, useState} from "react";
-import {useIsSidebar} from "@/components/design-editor/hooks";
 import {Flex, Input, Space, theme} from "antd";
 import {Field, FieldRenderProps, useClientContext} from "@flowgram.ai/fixed-layout-editor";
 import {EditOutlined} from "@ant-design/icons";
@@ -70,15 +69,20 @@ interface NodeHeaderProps {
 
 export const ManualTitle: React.FC<NodeHeaderProps> = (props) => {
     const {node} = useNodeRenderContext();
-    const isSidebar = useIsSidebar();
+    const {token} = theme.useToken();
     const iconEnable = props.iconEnable ?? true;
     const nodeType = node.getNodeRegistry<FlowNodeRegistry>().type as NodeType;
 
+    // NodePanel 容器有 3px padding，用负 margin + calc 让 header 色块向外扩展铺满并贴合卡片顶部圆角，消除四周白边
     const headerStyle: React.CSSProperties = {
-        width: "100%",
-        padding: isSidebar ? "4px 5px" : "5px",
-        borderBottom: "1px solid #f0f0f0",
-        marginBottom: 8,
+        width: "calc(100% + 6px)",
+        boxSizing: "border-box",
+        margin: "-3px -3px 8px -3px",
+        padding: "3px 8px",
+        background: token.colorPrimaryBg,
+        borderBottom: `1px solid ${token.colorPrimaryBorder}`,
+        borderTopLeftRadius: 7,
+        borderTopRightRadius: 7,
         position: "relative",
         ...props.style,
     };
