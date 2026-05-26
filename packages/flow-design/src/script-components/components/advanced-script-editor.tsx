@@ -42,8 +42,8 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = (props: ScriptEditorPro
             value={script}
             readonly={readonly}
             onChange={handleChange}
-            placeholder={"请输入 Groovy 脚本..."}
-            theme={'dark'}
+            placeholder={"请输入脚本..."}
+            theme={'light'}
             options={{
                 fontSize: 14,
                 minHeight: 300,

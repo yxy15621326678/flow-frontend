@@ -1,33 +1,9 @@
-import React, {useEffect, useRef} from 'react';
-import {EditorState} from '@codemirror/state';
-import {
-    crosshairCursor,
-    drawSelection,
-    dropCursor,
-    EditorView,
-    highlightActiveLine,
-    highlightActiveLineGutter,
-    highlightSpecialChars,
-    keymap,
-    lineNumbers,
-    placeholder as cmPlaceholder,
-    rectangularSelection
-} from '@codemirror/view';
-import {defaultKeymap, history, historyKeymap, indentWithTab} from '@codemirror/commands';
-import {
-    bracketMatching,
-    defaultHighlightStyle,
-    foldGutter,
-    foldKeymap,
-    HighlightStyle,
-    indentOnInput,
-    syntaxHighlighting
-} from '@codemirror/language';
-import {java} from '@codemirror/lang-java';
-import {oneDark} from '@codemirror/theme-one-dark';
-import {tags} from '@lezer/highlight';
+import React from 'react';
+import { message } from 'antd';
+import { ScriptCodeEditor, ScriptMetadata } from '@coding-script/script-engine';
 
 interface GroovyCodeEditorProps {
+    title?: string;
     value?: string;
     readonly?: boolean;
     onChange?: (value: string) => void;
@@ -40,126 +16,31 @@ interface GroovyCodeEditorProps {
     };
 }
 
-const darkHighlightStyle = HighlightStyle.define([
-    {tag: tags.keyword, color: '#c678dd'},
-    {tag: tags.operator, color: '#56b6c2'},
-    {tag: tags.variableName, color: '#e5c07b'},
-    {tag: tags.string, color: '#98c379'},
-    {tag: tags.comment, color: '#5c6370', fontStyle: 'italic'},
-    {tag: tags.number, color: '#d19a66'},
-    {tag: tags.bool, color: '#d19a66'},
-    {tag: tags.null, color: '#d19a66'},
-    {tag: tags.propertyName, color: '#e06c75'},
-    {tag: tags.function(tags.variableName), color: '#61afef'},
-    {tag: tags.definition(tags.variableName), color: '#e5c07b'},
-    {tag: tags.typeName, color: '#e5c07b'},
-    {tag: tags.className, color: '#e5c07b'},
-    {tag: tags.annotation, color: '#d19a66'},
-]);
-
 export const GroovyCodeEditor: React.FC<GroovyCodeEditorProps> = (props) => {
-    const {
-        value,
-        readonly = false,
-        onChange,
-        placeholder = '请输入 Groovy 脚本...',
-        theme = 'dark',
-        options = {}
-    } = props;
 
-    const editorRef = useRef<HTMLDivElement>(null);
-    const viewRef = useRef<EditorView | null>(null);
+    const title = props.title || '脚本编辑器';
 
-    const {fontSize = 14, minHeight = 300, maxHeight = 300} = options;
+    const sampleMetadata: ScriptMetadata = JSON.parse(`{"binds":[{"dataType":"GroovyBindObject","name":"$request"}],"mainMethod":"run","requests":[{"dataType":"MyScriptRequest","description":"我的测试对象","name":"request"}],"returnType":"Integer","types":{"MyScriptRequest":{"dataType":"MyScriptRequest","description":"我的测试对象","fields":[{"dataType":"int","description":"总数量","name":"count"},{"dataType":"MyTest","description":"test","name":"test"}],"functions":[{"description":"是否匹配","name":"isSupport","parameters":[{"dataType":"int","description":"描述信息","name":"count"}]}]},"Integer":{"dataType":"Integer","fields":[],"functions":[]},"boolean":{"dataType":"boolean","fields":[],"functions":[]},"Long":{"dataType":"Long","fields":[],"functions":[]},"String":{"dataType":"String","fields":[],"functions":[]},"MyTest":{"dataType":"MyTest","description":"test","fields":[{"dataType":"Long","description":"id","name":"id"},{"dataType":"String","description":"name","name":"name"}],"functions":[]},"int":{"dataType":"int","fields":[],"functions":[]}}}`);
 
-    useEffect(() => {
-        if (!editorRef.current) return;
 
-        const extensions = [
-            lineNumbers(),
-            highlightActiveLineGutter(),
-            highlightSpecialChars(),
-            history(),
-            foldGutter(),
-            drawSelection(),
-            dropCursor(),
-            EditorState.allowMultipleSelections.of(true),
-            indentOnInput(),
-            bracketMatching(),
-            rectangularSelection(),
-            crosshairCursor(),
-            highlightActiveLine(),
-            keymap.of([
-                ...defaultKeymap,
-                ...historyKeymap,
-                ...foldKeymap,
-                indentWithTab,
-            ]),
-            java(),
-            cmPlaceholder(placeholder),
-            EditorView.updateListener.of((update) => {
-                if (update.docChanged && onChange) {
-                    onChange(update.state.doc.toString());
-                }
-            }),
-            EditorView.theme({
-                '&': {
-                    fontSize: `${fontSize}px`,
-                },
-                '.cm-scroller': {
-                    overflow: 'auto',
-                    minHeight: `${minHeight}px`,
-                    maxHeight: `${maxHeight}px`,
-                },
-                '.cm-content': {
-                    fontFamily: 'monospace',
-                    minHeight: `${minHeight}px`,
-                },
-                '.cm-gutters': {
-                    minHeight: `${minHeight}px`,
-                },
-            }),
-        ];
-
-        if (theme === 'dark') {
-            extensions.push(oneDark);
-            extensions.push(syntaxHighlighting(darkHighlightStyle));
-        } else {
-            extensions.push(syntaxHighlighting(defaultHighlightStyle));
-        }
-
-        if (readonly) {
-            extensions.push(EditorState.readOnly.of(true));
-        }
-
-        const state = EditorState.create({
-            doc: value,
-            extensions,
-        });
-
-        const view = new EditorView({
-            state,
-            parent: editorRef.current,
-        });
-
-        viewRef.current = view;
-
-        return () => {
-            view.destroy();
-        };
-    }, [theme, fontSize, minHeight, maxHeight, placeholder, readonly]);
-
-    useEffect(() => {
-        if (viewRef.current && value !== viewRef.current.state.doc.toString()) {
-            viewRef.current.dispatch({
-                changes: {
-                    from: 0,
-                    to: viewRef.current.state.doc.length,
-                    insert: value,
-                },
-            });
-        }
-    }, [value]);
-
-    return <div ref={editorRef} style={{border: '1px solid #434343', borderRadius: 6, overflow: 'hidden'}}/>;
+    return (
+        <ScriptCodeEditor
+            title={title}
+            value={props.value}
+            onChange={props.onChange}
+            placeholder={props.placeholder}
+            readonly={props.readonly}
+            options={props.options}
+            defaultTheme={props.theme || 'light'}
+            metadata={sampleMetadata}
+            enableCompile={true}
+            enableFormat={true}
+            enableFullscreen={true}
+            enableThemeToggle={true}
+            onCompile={(code) => {
+                console.log('编译脚本:', code);
+                message.success('脚本编译测试已提交');
+            }}
+        />
+    )
 };
