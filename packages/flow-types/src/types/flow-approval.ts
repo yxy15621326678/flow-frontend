@@ -160,6 +160,8 @@ export interface History {
     nodeType: string
     // 审批时间
     updateTime: number;
+    // 阅读时间
+    readTime: number;
 }
 
 /**
