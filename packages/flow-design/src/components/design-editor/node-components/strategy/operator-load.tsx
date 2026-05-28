@@ -1,24 +1,62 @@
 import React from "react";
-import {Button, Form, Select, Space} from "antd";
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
-import {EditOutlined} from "@ant-design/icons";
-import {GroovyScriptPreview} from "@/script-components/components/groovy-script-preview";
-import {OperatorLoadConfigModal} from "@/script-components/modal/operator-load-config-modal";
+import { Button, Form, Select, Space } from "antd";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { EditOutlined } from "@ant-design/icons";
+import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
+import { OperatorLoadConfigModal } from "@/script-components/modal/operator-load-config-modal";
+import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 const SELECT_TYPE_OPTIONS = [
-    {label: '脚本指定', value: 'SCRIPT'},
-    {label: '发起人设定', value: 'INITIATOR_SELECT'},
-    {label: '审批人设定', value: 'APPROVER_SELECT'},
+    { label: '脚本指定', value: 'SCRIPT' },
+    { label: '发起人设定', value: 'INITIATOR_SELECT' },
+    { label: '审批人设定', value: 'APPROVER_SELECT' },
 ];
+
+
+const OperatorLoadScriptContent: React.FC<GroovyScriptContent> = (props) => {
+
+    const [visible, setVisible] = React.useState(false);
+    const value = props.value || '';
+
+    return (
+        <Space.Compact style={{ width: '100%' }}>
+            <GroovyScriptPreview
+                script={value}
+            />
+
+            <Button
+                icon={<EditOutlined />}
+                onClick={() => {
+                    setVisible(true);
+                }}
+                style={{ borderRadius: '0 6px 6px 0' }}
+            >
+                编辑
+            </Button>
+
+            <OperatorLoadConfigModal
+                script={value}
+                open={visible}
+                onCancel={() => { setVisible(false); }}
+                onConfirm={(value) => {
+                    props.onChange?.(value);
+                }}
+                scriptKey={props.scriptKey}
+            />
+
+        </Space.Compact>
+    )
+}
+
 
 /**
  * 操作人配置策略
  * @constructor
  */
-export const OperatorLoadStrategy:React.FC = () => {
+export const OperatorLoadStrategy: React.FC = () => {
 
     const [form] = Form.useForm();
-    const [visible,setVisible] = React.useState(false);
+    const [visible, setVisible] = React.useState(false);
 
     return (
         <Form
@@ -30,7 +68,7 @@ export const OperatorLoadStrategy:React.FC = () => {
         >
             <Form.Item
                 label={"操作人设定方式"}
-                name={["OperatorLoadStrategy","selectType"]}
+                name={["OperatorLoadStrategy", "selectType"]}
                 tooltip={"选择操作人的指定方式"}
             >
                 <Field
@@ -53,37 +91,17 @@ export const OperatorLoadStrategy:React.FC = () => {
                     return (
                         <Form.Item
                             label={isRangeMode ? "设定人员范围" : "当前操作人"}
-                            name={["OperatorLoadStrategy","script"]}
+                            name={["OperatorLoadStrategy", "script"]}
                             tooltip={isRangeMode ? "设定可选人员范围，留空表示不限范围（可选任意人）" : "设定流程的审批人"}
                         >
                             <Field
                                 name="OperatorLoadStrategy.script"
                                 render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
-                                    <Space.Compact style={{width: '100%'}}>
-                                        <GroovyScriptPreview
-                                            script={value}
-                                        />
-
-                                        <Button
-                                            icon={<EditOutlined/>}
-                                            onClick={() => {
-                                                setVisible(true);
-                                            }}
-                                            style={{borderRadius: '0 6px 6px 0'}}
-                                        >
-                                            编辑
-                                        </Button>
-
-                                        <OperatorLoadConfigModal
-                                            script={value}
-                                            open={visible}
-                                            onCancel={()=>{setVisible(false);}}
-                                            onConfirm={(value)=>{
-                                                onChange(value);
-                                            }}
-                                        />
-
-                                    </Space.Compact>
+                                   <GroovyScriptLoader
+                                        content={OperatorLoadScriptContent}
+                                        value={value}
+                                        onChange={onChange}
+                                    />
                                 )}
                             />
                         </Form.Item>

@@ -1,15 +1,19 @@
 import React from 'react';
-import {Modal} from 'antd';
-import {GroovyVariableMapping, ScriptType} from "@/script-components/typings";
-import {DesignViewPluginAction} from "@/plugins";
+import { Modal } from 'antd';
+import { GroovyVariableMapping, ScriptType } from "@/script-components/typings";
+import { DesignViewPluginAction } from "@/plugins";
 
 
 export interface GroovyScriptModalProps {
     open: boolean;
     /** 脚本类型 */
     type: ScriptType;
-    /** 当前脚本 */
+    /** 脚本 */
     script: string;
+    /** 脚本键 */
+    scriptKey: string;
+    /** 重置脚本 */
+    resetScript?: () => string;
     /** 变量映射列表 */
     variables: GroovyVariableMapping[];
     /** 确认回调 */
@@ -30,12 +34,18 @@ export interface GroovyScriptContent {
     type: ScriptType;
     /** 当前脚本 */
     script: string;
+    /** 脚本键 */
+    scriptKey: string;
     /** 变量映射列表 */
     variables: GroovyVariableMapping[];
     /** 确认回调 */
     onChange: (script: string) => void;
     /** 动作控制 */
     action?: React.Ref<DesignViewPluginAction>;
+    /** 重置脚本 */
+    resetScript?: () => string;
+    /** 是否只读 */
+    readonly?: boolean;
 }
 
 interface GroovyScriptContentComponentAction {
@@ -47,6 +57,8 @@ interface GroovyScriptContentComponentProps extends GroovyScriptModalProps {
 }
 
 const GroovyScriptContentComponent: React.FC<GroovyScriptContentComponentProps> = (props) => {
+
+
     const [content, setContent] = React.useState(props.script);
     const GroovyContent = props.content;
 
@@ -74,9 +86,11 @@ const GroovyScriptContentComponent: React.FC<GroovyScriptContentComponentProps> 
         <GroovyContent
             action={actionRef}
             type={props.type}
+            scriptKey={props.scriptKey}
             script={content}
             variables={props.variables}
             onChange={setContent}
+            resetScript={props.resetScript}
         />
     )
 }

@@ -3,6 +3,7 @@ import {Input} from "antd";
 import {CardForm, Panel} from "@coding-flow/flow-pc-ui";
 import {useDesignContext} from "@/components/design-panel/hooks/use-design-context";
 import {FlowCreateOperatorEditor} from "./operator";
+import { GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 export const TabBase = () => {
 
@@ -120,7 +121,9 @@ export const TabBase = () => {
                         }
                     ]}
                 >
-                    <FlowCreateOperatorEditor/>
+                    <GroovyScriptLoader
+                        content={FlowCreateOperatorEditor}
+                    />
                 </CardForm.Item>
             </CardForm>
         </Panel>

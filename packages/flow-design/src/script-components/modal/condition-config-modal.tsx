@@ -1,16 +1,18 @@
 import React from "react";
-import {GroovyVariableMapping, ScriptType} from "@/script-components/typings";
-import {GroovyScriptContent, GroovyScriptModal} from "@/script-components/components/groovy-script-modal";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
-import {AdvancedScriptEditor} from "@/script-components/components/advanced-script-editor";
-import {SCRIPT_DEFAULT_CONDITION} from "@/script-components/default-script";
-import {ConditionPluginView} from "@/plugins/view/condition-view";
+import { GroovyVariableMapping, ScriptType } from "@/script-components/typings";
+import { GroovyScriptContent, GroovyScriptModal } from "@/script-components/components/groovy-script-modal";
+import { GroovyScriptConvertorUtil } from "@coding-flow/flow-core";
+import { AdvancedScriptEditor } from "@/script-components/components/advanced-script-editor";
+import { SCRIPT_DEFAULT_CONDITION } from "@/script-components/default-script";
+import { ConditionPluginView } from "@/plugins/view/condition-view";
 
 export interface ConditionConfigModalProps {
     /** 是否展示 **/
     open: boolean;
-    /** 当前脚本 */
+     /** 脚本内容 */
     script: string;
+    /** 脚本key */
+    scriptKey: string;
     /** 表单字段（用于动态生成变量） */
     variables?: GroovyVariableMapping[];
     /** 取消回调 */
@@ -29,7 +31,7 @@ const ConditionConfigContent: React.FC<GroovyScriptContent> = (props) => {
             {isAdvance && (
                 <AdvancedScriptEditor
                     {...props}
-                    resetScript={()=>{
+                    resetScript={() => {
                         return SCRIPT_DEFAULT_CONDITION;
                     }}
                 />
@@ -41,7 +43,7 @@ const ConditionConfigContent: React.FC<GroovyScriptContent> = (props) => {
     );
 }
 
-export const ConditionConfigModal:React.FC<ConditionConfigModalProps> = (props) => {
+export const ConditionConfigModal: React.FC<ConditionConfigModalProps> = (props) => {
     return (
         <GroovyScriptModal
             type={ScriptType.CONDITION}
@@ -53,6 +55,7 @@ export const ConditionConfigModal:React.FC<ConditionConfigModalProps> = (props) 
             title="条件配置"
             width={"70%"}
             content={ConditionConfigContent}
+            scriptKey={props.scriptKey}
         />
     );
 }

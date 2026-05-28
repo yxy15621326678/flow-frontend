@@ -1,17 +1,53 @@
 import React from "react";
-import {Button, Form, Space} from "antd";
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
-import {GroovyScriptPreview} from "@/script-components/components/groovy-script-preview";
-import {EditOutlined} from "@ant-design/icons";
-import {TriggerConfigModal} from "@/script-components/modal/trigger-config-modal";
+import { Button, Form, Space } from "antd";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
+import { EditOutlined } from "@ant-design/icons";
+import { TriggerConfigModal } from "@/script-components/modal/trigger-config-modal";
+import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+
+
+const TriggerConfigContent: React.FC<GroovyScriptContent> = (props) => {
+
+    const [visible, setVisible] = React.useState(false);
+    const value = props.value || '';
+
+    return (
+        <Space.Compact style={{ width: '100%' }}>
+            <GroovyScriptPreview
+                script={value}
+            />
+
+            <Button
+                icon={<EditOutlined />}
+                onClick={() => {
+                    setVisible(true);
+                }}
+                style={{ borderRadius: '0 6px 6px 0' }}
+            >
+                编辑
+            </Button>
+
+            <TriggerConfigModal
+                open={visible}
+                onCancel={() => { setVisible(false); }}
+                onConfirm={(value) => { props.onChange?.(value) }}
+                script={value}
+                scriptKey={props.scriptKey}
+            />
+        </Space.Compact>
+    )
+
+
+}
 
 /**
  * 触发策略配置
  * @constructor
  */
-export const TriggerStrategy:React.FC = () => {
+export const TriggerStrategy: React.FC = () => {
     const [form] = Form.useForm();
-    const [visible,setVisible] = React.useState(false);
+    const [visible, setVisible] = React.useState(false);
 
     return (
         <Form
@@ -23,33 +59,16 @@ export const TriggerStrategy:React.FC = () => {
         >
             <Form.Item
                 label={"触发表达式"}
-                name={["TriggerStrategy","script"]}
+                name={["TriggerStrategy", "script"]}
             >
                 <Field
                     name={"TriggerStrategy.script"}
                     render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
-                        <Space.Compact style={{width: '100%'}}>
-                            <GroovyScriptPreview
-                                script={value}
-                            />
-
-                            <Button
-                                icon={<EditOutlined/>}
-                                onClick={() => {
-                                    setVisible(true);
-                                }}
-                                style={{borderRadius: '0 6px 6px 0'}}
-                            >
-                                编辑
-                            </Button>
-
-                            <TriggerConfigModal
-                                open={visible}
-                                onCancel={()=>{setVisible(false);}}
-                                onConfirm={(value)=>{onChange(value)}}
-                                script={value}
-                            />
-                        </Space.Compact>
+                        <GroovyScriptLoader
+                            content={TriggerConfigContent}
+                            value={value}
+                            onChange={onChange}
+                        />
                     )}
                 />
             </Form.Item>

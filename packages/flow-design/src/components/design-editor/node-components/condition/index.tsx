@@ -1,20 +1,57 @@
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
-import {Button, Form, Space} from "antd";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { Button, Form, Space } from "antd";
 import React from "react";
-import {GroovyScriptPreview} from "@/script-components/components/groovy-script-preview";
-import {EditOutlined} from "@ant-design/icons";
-import {ConditionConfigModal} from "@/script-components/modal/condition-config-modal";
-import {useScriptVariables} from "@/components/design-editor/hooks/use-script-variables";
+import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
+import { EditOutlined } from "@ant-design/icons";
+import { ConditionConfigModal } from "@/script-components/modal/condition-config-modal";
+import { useScriptVariables } from "@/components/design-editor/hooks/use-script-variables";
+import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+
+
+const ConditionConfigContent: React.FC<GroovyScriptContent> = (props) => {
+
+    const [visible, setVisible] = React.useState(false);
+    const scriptVariables = useScriptVariables();
+
+    const value = props.value || '';
+
+    return (
+        <Space.Compact style={{ width: '100%' }}>
+            <GroovyScriptPreview
+                script={value}
+            />
+
+            <Button
+                icon={<EditOutlined />}
+                onClick={() => {
+                    setVisible(true);
+                }}
+                style={{ borderRadius: '0 6px 6px 0' }}
+            >
+                编辑
+            </Button>
+
+            <ConditionConfigModal
+                open={visible}
+                onCancel={() => { setVisible(false); }}
+                onConfirm={(value) => { props.onChange?.(value) }}
+                scriptKey={props.scriptKey}
+                script={value}
+                variables={scriptVariables}
+            />
+
+        </Space.Compact>
+    )
+}
+
 
 /**
  * 条件配置
  * @constructor
  */
-export const ConditionScript = ()=>{
+export const ConditionScript = () => {
 
     const [form] = Form.useForm();
-    const [visible,setVisible] = React.useState(false);
-    const scriptVariables = useScriptVariables();
 
     return (
         <Form
@@ -31,29 +68,9 @@ export const ConditionScript = ()=>{
                 <Field
                     name={"script"}
                     render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
-                        <Space.Compact style={{width: '100%'}}>
-                            <GroovyScriptPreview
-                                script={value}
-                            />
-
-                            <Button
-                                icon={<EditOutlined/>}
-                                onClick={() => {
-                                    setVisible(true);
-                                }}
-                                style={{borderRadius: '0 6px 6px 0'}}
-                            >
-                                编辑
-                            </Button>
-
-                            <ConditionConfigModal
-                                open={visible}
-                                onCancel={()=>{setVisible(false);}}
-                                onConfirm={(value)=>{onChange(value)}}
-                                script={value}
-                                variables={scriptVariables}
-                            />
-                        </Space.Compact>
+                        <GroovyScriptLoader
+                            content={ConditionConfigContent}
+                        />
                     )}
                 />
             </Form.Item>

@@ -7,6 +7,8 @@ export const VIEW_KEY = 'TriggerViewPlugin';
 export interface TriggerViewPlugin {
     /** 脚本类型 */
     type: ScriptType;
+    /** 脚本key */
+    scriptKey: string;
     /** 当前脚本 */
     script: string;
     /** 变量映射列表 */

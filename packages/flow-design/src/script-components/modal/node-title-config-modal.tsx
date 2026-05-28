@@ -1,16 +1,18 @@
 import React from 'react';
-import {GroovyScriptContent, GroovyScriptModal} from "../components/groovy-script-modal";
-import {AdvancedScriptEditor} from "@/script-components/components/advanced-script-editor";
-import {GroovyVariableMapping, ScriptType} from "@/script-components/typings";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
-import {NodeTitlePluginView} from "@/plugins/view/node-title-view";
-import {SCRIPT_DEFAULT_NODE_TITLE} from "@/script-components/default-script";
+import { GroovyScriptContent, GroovyScriptModal } from "../components/groovy-script-modal";
+import { AdvancedScriptEditor } from "@/script-components/components/advanced-script-editor";
+import { GroovyVariableMapping, ScriptType } from "@/script-components/typings";
+import { GroovyScriptConvertorUtil } from "@coding-flow/flow-core";
+import { NodeTitlePluginView } from "@/plugins/view/node-title-view";
+import { SCRIPT_DEFAULT_NODE_TITLE } from "@/script-components/default-script";
 
 export interface NodeTitleConfigModalProps {
     /** 是否展示 **/
     open: boolean;
-    /** 当前脚本 */
+      /** 脚本内容 */
     script: string;
+    /** 脚本key */
+    scriptKey: string;
     /** 表单字段（用于动态生成变量） */
     variables?: GroovyVariableMapping[];
     /** 取消回调 */
@@ -27,7 +29,7 @@ const NodeTitleConfigContent: React.FC<GroovyScriptContent> = (props) => {
             {isAdvance && (
                 <AdvancedScriptEditor
                     {...props}
-                    resetScript={()=>{
+                    resetScript={() => {
                         return SCRIPT_DEFAULT_NODE_TITLE;
                     }}
                 />
@@ -56,6 +58,7 @@ export const NodeTitleConfigModal: React.FC<NodeTitleConfigModalProps> = (props)
             onCancel={props.onCancel}
             title="标题配置"
             content={NodeTitleConfigContent}
+            scriptKey={props.scriptKey}
         />
     );
 };

@@ -1,9 +1,45 @@
 import React from "react";
-import {Button, Form, Space} from "antd";
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
-import {GroovyScriptPreview} from "@/script-components/components/groovy-script-preview";
-import {EditOutlined} from "@ant-design/icons";
-import {ErrorTriggerConfigModal} from "@/script-components/modal/error-trigger-config-modal";
+import { Button, Form, Space } from "antd";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
+import { EditOutlined } from "@ant-design/icons";
+import { ErrorTriggerConfigModal } from "@/script-components/modal/error-trigger-config-modal";
+import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+
+
+const ErrorTriggerConfigContent: React.FC<GroovyScriptContent> = (props) => {
+
+    const [visible, setVisible] = React.useState(false);
+    const value = props.value || '';
+
+
+    return (
+        <Space.Compact style={{ width: '100%' }}>
+            <GroovyScriptPreview
+                script={value}
+            />
+
+            <Button
+                icon={<EditOutlined />}
+                onClick={() => {
+                    setVisible(true);
+                }}
+                style={{ borderRadius: '0 6px 6px 0' }}
+            >
+                编辑
+            </Button>
+
+            <ErrorTriggerConfigModal
+                open={visible}
+                onCancel={() => { setVisible(false); }}
+                onConfirm={(value) => { props.onChange?.(value) }}
+                script={value}
+                scriptKey={props.scriptKey}
+            />
+        </Space.Compact>
+    )
+}
+
 
 /**
  * 错误触发策略配置(没有匹配到人时)
@@ -12,7 +48,7 @@ import {ErrorTriggerConfigModal} from "@/script-components/modal/error-trigger-c
 export const ErrorTriggerStrategy: React.FC = () => {
 
     const [form] = Form.useForm();
-    const [visible,setVisible] = React.useState(false);
+    const [visible, setVisible] = React.useState(false);
 
     return (
         <Form
@@ -24,34 +60,17 @@ export const ErrorTriggerStrategy: React.FC = () => {
         >
             <Form.Item
                 label={"异常配置"}
-                name={["ErrorTriggerStrategy","script"]}
+                name={["ErrorTriggerStrategy", "script"]}
                 tooltip={"在没有匹配到操作人时触发的脚本配置"}
             >
                 <Field
                     name={"ErrorTriggerStrategy.script"}
                     render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
-                        <Space.Compact style={{width: '100%'}}>
-                            <GroovyScriptPreview
-                                script={value}
-                            />
-
-                            <Button
-                                icon={<EditOutlined/>}
-                                onClick={() => {
-                                    setVisible(true);
-                                }}
-                                style={{borderRadius: '0 6px 6px 0'}}
-                            >
-                                编辑
-                            </Button>
-
-                            <ErrorTriggerConfigModal
-                                open={visible}
-                                onCancel={()=>{setVisible(false);}}
-                                onConfirm={(value)=>{onChange(value)}}
-                                script={value}
-                            />
-                        </Space.Compact>
+                        <GroovyScriptLoader
+                            content={ErrorTriggerConfigContent}
+                            value={value}
+                            onChange={onChange}
+                        />
                     )}
                 />
             </Form.Item>

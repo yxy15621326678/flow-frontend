@@ -1,17 +1,19 @@
 import React from "react";
-import {GroovyScriptContent, GroovyScriptModal} from "@/script-components/components/groovy-script-modal";
-import {ScriptType} from "@/script-components/typings";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
-import {AdvancedScriptEditor} from "@/script-components/components/advanced-script-editor";
-import {OperatorCreatePluginView} from "@/plugins/view/operator-create-view";
-import {SCRIPT_DEFAULT_OPERATOR_CREATE} from "@/script-components/default-script";
+import { GroovyScriptContent, GroovyScriptModal } from "@/script-components/components/groovy-script-modal";
+import { ScriptType } from "@/script-components/typings";
+import { GroovyScriptConvertorUtil } from "@coding-flow/flow-core";
+import { AdvancedScriptEditor } from "@/script-components/components/advanced-script-editor";
+import { OperatorCreatePluginView } from "@/plugins/view/operator-create-view";
+import { SCRIPT_DEFAULT_OPERATOR_CREATE } from "@/script-components/default-script";
 
 
-interface OperatorCreateConfigModalProps{
+interface OperatorCreateConfigModalProps {
     /** 是否展示 **/
     open: boolean;
-    /** 当前脚本 */
+    /** 脚本内容 */
     script: string;
+    /** 脚本key */
+    scriptKey: string;
     /** 取消回调 */
     onCancel: () => void;
     /** 确认回调 */
@@ -19,7 +21,7 @@ interface OperatorCreateConfigModalProps{
 }
 
 
-const OperatorCreateConfigContent :React.FC<GroovyScriptContent> = (props)=>{
+const OperatorCreateConfigContent: React.FC<GroovyScriptContent> = (props) => {
 
     const isAdvance = GroovyScriptConvertorUtil.isCustomScript(props.script);
 
@@ -28,7 +30,7 @@ const OperatorCreateConfigContent :React.FC<GroovyScriptContent> = (props)=>{
             {isAdvance && (
                 <AdvancedScriptEditor
                     {...props}
-                    resetScript={()=>{
+                    resetScript={() => {
                         return SCRIPT_DEFAULT_OPERATOR_CREATE;
                     }}
                 />
@@ -45,7 +47,7 @@ const OperatorCreateConfigContent :React.FC<GroovyScriptContent> = (props)=>{
 }
 
 
-export const OperatorCreateConfigModal:React.FC<OperatorCreateConfigModalProps> = (props) => {
+export const OperatorCreateConfigModal: React.FC<OperatorCreateConfigModalProps> = (props) => {
 
     return (
         <GroovyScriptModal
@@ -53,11 +55,12 @@ export const OperatorCreateConfigModal:React.FC<OperatorCreateConfigModalProps> 
             width={"70%"}
             type={ScriptType.OPERATOR_CREATE}
             variables={[]}
-            script={props.script}
             content={OperatorCreateConfigContent}
             open={props.open}
             onCancel={props.onCancel}
             onConfirm={props.onConfirm}
+            scriptKey={props.scriptKey}
+            script={props.script}
         />
     )
 }

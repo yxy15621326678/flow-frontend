@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "~6.1.0",
-    "@coding-script/script-engine": "^0.0.3",
+    "@coding-script/script-engine": "^0.0.4",
     "@coding-flow/flow-core": "workspace:*",
     "@coding-flow/flow-icons": "workspace:*",
     "@coding-flow/flow-pc-ui": "workspace:*",

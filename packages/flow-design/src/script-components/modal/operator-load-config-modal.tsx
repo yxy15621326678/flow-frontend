@@ -1,16 +1,18 @@
 import React from "react";
-import {GroovyScriptContent, GroovyScriptModal} from "@/script-components/components/groovy-script-modal";
-import {ScriptType} from "@/script-components/typings";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
-import {AdvancedScriptEditor} from "@/script-components/components/advanced-script-editor";
-import {OperatorLoadPluginView} from "@/plugins/view/operator-load-view";
-import {SCRIPT_DEFAULT_OPERATOR_LOAD} from "@/script-components/default-script";
+import { GroovyScriptContent, GroovyScriptModal } from "@/script-components/components/groovy-script-modal";
+import { ScriptType } from "@/script-components/typings";
+import { GroovyScriptConvertorUtil } from "@coding-flow/flow-core";
+import { AdvancedScriptEditor } from "@/script-components/components/advanced-script-editor";
+import { OperatorLoadPluginView } from "@/plugins/view/operator-load-view";
+import { SCRIPT_DEFAULT_OPERATOR_LOAD } from "@/script-components/default-script";
 
-interface OperatorLoadConfigModalProps{
+interface OperatorLoadConfigModalProps {
     /** 是否展示 **/
     open: boolean;
-    /** 当前脚本 */
+    /** 脚本内容 */
     script: string;
+    /** 脚本key */
+    scriptKey: string;
     /** 取消回调 */
     onCancel: () => void;
     /** 确认回调 */
@@ -18,7 +20,7 @@ interface OperatorLoadConfigModalProps{
 }
 
 
-const OperatorLoadConfigContent:React.FC<GroovyScriptContent> = (props)=>{
+const OperatorLoadConfigContent: React.FC<GroovyScriptContent> = (props) => {
     const isAdvance = GroovyScriptConvertorUtil.isCustomScript(props.script);
 
     return (
@@ -26,7 +28,7 @@ const OperatorLoadConfigContent:React.FC<GroovyScriptContent> = (props)=>{
             {isAdvance && (
                 <AdvancedScriptEditor
                     {...props}
-                    resetScript={()=>{
+                    resetScript={() => {
                         return SCRIPT_DEFAULT_OPERATOR_LOAD;
                     }}
                 />
@@ -43,7 +45,7 @@ const OperatorLoadConfigContent:React.FC<GroovyScriptContent> = (props)=>{
 }
 
 
-export const OperatorLoadConfigModal:React.FC<OperatorLoadConfigModalProps> = (props)=>{
+export const OperatorLoadConfigModal: React.FC<OperatorLoadConfigModalProps> = (props) => {
 
     return (
         <GroovyScriptModal
@@ -56,6 +58,7 @@ export const OperatorLoadConfigModal:React.FC<OperatorLoadConfigModalProps> = (p
             open={props.open}
             onCancel={props.onCancel}
             onConfirm={props.onConfirm}
+            scriptKey={props.scriptKey}
         />
     )
 
