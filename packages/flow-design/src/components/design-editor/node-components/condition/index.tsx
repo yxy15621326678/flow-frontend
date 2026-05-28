@@ -70,6 +70,8 @@ export const ConditionScript = () => {
                     render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
                         <GroovyScriptLoader
                             content={ConditionConfigContent}
+                            value={value}
+                            onChange={onChange}
                         />
                     )}
                 />

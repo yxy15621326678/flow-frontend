@@ -10,6 +10,24 @@ import {RevokeStrategy} from "@/components/design-editor/node-components/strateg
 import {View} from "@/components/design-editor/node-components/view";
 import {useDesignContext} from "@/components/design-panel/hooks/use-design-context";
 import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
+import { GroovyScriptLoader } from '@/script-components/components/groovy-script-loader';
+
+
+interface ScriptContentProps {
+    scriptKey: string;
+    value?: string;
+    onChange?: (value: string) => void;
+}
+
+const ScriptContent: React.FC<ScriptContentProps> = (props) => {
+
+    return (
+        <div>
+            {GroovyScriptConvertorUtil.getScriptTitle(props.value || '')}
+        </div>
+    );
+}
+
 
 export const renderForm = (data: FormRenderProps<FlowNodeJSON['data']>) => {
     const isSidebar = useIsSidebar();
@@ -29,7 +47,10 @@ export const renderForm = (data: FormRenderProps<FlowNodeJSON['data']>) => {
     return (
         <NodePanel data={data}>
             <NodeHeader/>
-            {GroovyScriptConvertorUtil.getScriptTitle(state.workflow.operatorCreateScript)}
+            <GroovyScriptLoader
+                content={ScriptContent}
+                value={state.workflow.operatorCreateScript}
+            />
         </NodePanel>
     );
 };

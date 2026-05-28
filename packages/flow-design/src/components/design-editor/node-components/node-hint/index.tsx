@@ -1,7 +1,8 @@
 import React from "react";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
-import {Text} from "@coding-flow/flow-pc-ui";
+import { GroovyScriptConvertorUtil } from "@coding-flow/flow-core";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { Text } from "@coding-flow/flow-pc-ui";
+import { GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 interface NodeHintProps {
     fieldName: string;
@@ -14,6 +15,27 @@ const DEFAULT_SELECT_TYPE_LABEL_MAP: Record<string, string> = {
     'APPROVER_SELECT': '审批人设定',
 };
 
+
+interface ScriptContentProps {
+    scriptKey: string;
+    value?: string;
+    onChange?: (value: string) => void;
+}
+
+const ScriptContent: React.FC<ScriptContentProps> = (props) => {
+
+    const value = props.value || '';
+
+    return (
+        <Text
+            suffixCount={100}
+            key={value}
+        >
+            {GroovyScriptConvertorUtil.getScriptTitle(value)}
+        </Text>
+    );
+};
+
 export const NodeHint: React.FC<NodeHintProps> = (props) => {
     const labelMap = props.selectTypeLabelMap || DEFAULT_SELECT_TYPE_LABEL_MAP;
 
@@ -21,13 +43,11 @@ export const NodeHint: React.FC<NodeHintProps> = (props) => {
         return (
             <Field
                 name={props.fieldName}
-                render={({field: {value}}: FieldRenderProps<any>) => (
-                    <Text
-                        suffixCount={100}
-                        key={value}
-                    >
-                        {GroovyScriptConvertorUtil.getScriptTitle(value)}
-                    </Text>
+                render={({ field: { value } }: FieldRenderProps<any>) => (
+                    <GroovyScriptLoader
+                        content={ScriptContent}
+                        value={value}
+                    />
                 )}
             />
         );
@@ -36,7 +56,7 @@ export const NodeHint: React.FC<NodeHintProps> = (props) => {
     return (
         <Field
             name={props.selectTypeFieldName}
-            render={({field: {value: selectType}}: FieldRenderProps<any>) => {
+            render={({ field: { value: selectType } }: FieldRenderProps<any>) => {
                 if (selectType && selectType !== 'SCRIPT' && labelMap[selectType]) {
                     return (
                         <Text suffixCount={100} key={selectType}>
@@ -47,13 +67,11 @@ export const NodeHint: React.FC<NodeHintProps> = (props) => {
                 return (
                     <Field
                         name={props.fieldName}
-                        render={({field: {value}}: FieldRenderProps<any>) => (
-                            <Text
-                                suffixCount={100}
-                                key={value}
-                            >
-                                {GroovyScriptConvertorUtil.getScriptTitle(value)}
-                            </Text>
+                        render={({ field: { value } }: FieldRenderProps<any>) => (
+                            <GroovyScriptLoader
+                                content={ScriptContent}
+                                value={value}
+                            />
                         )}
                     />
                 );

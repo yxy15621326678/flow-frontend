@@ -1,4 +1,5 @@
-import { getScript } from '@/api/script';
+import { getScript, save } from '@/api/script';
+import { message } from 'antd';
 import React from 'react';
 
 export interface GroovyScriptLoaderProps {
@@ -23,27 +24,47 @@ export const GroovyScriptLoader: React.FC<GroovyScriptLoaderProps> = (props) => 
 
     const ScriptContent = props.content;
 
+    const handlerSaveScript = (script: string) => {
+        save({
+            key: scriptKey,
+            script: script
+        }).then((res: any) => {
+            if (res.success) {
+                message.success('规则脚本已经更新');
+            }
+        });
+    }
+
+
     const handleScriptChange = (currentScript: string) => {
         if (script === currentScript) {
             return;
         }
         console.log('script changed', currentScript);
-        setScript(currentScript);
+        handlerSaveScript(currentScript);
+
+        props.onChange?.(scriptKey);
     }
 
     React.useEffect(() => {
         if (scriptKey) {
-            getScript(scriptKey).then(res => {
+            getScript(scriptKey).then((res: any) => {
                 setScript(res.data);
             });
         }
     }, [scriptKey]);
+
+    React.useEffect(() => {
+        return () => {
+            setScript('');
+        };
+    }, []);
 
     return (
         <ScriptContent
             scriptKey={scriptKey}
             value={script}
             onChange={handleScriptChange}
-         />
+        />
     );
 };

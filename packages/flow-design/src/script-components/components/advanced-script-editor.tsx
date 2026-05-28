@@ -14,6 +14,7 @@ export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
     };
 
 
+
     return (
         <GroovyCodeEditor
             value={script}
@@ -21,6 +22,21 @@ export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
             readonly={readonly}
             onChange={handleChange}
             placeholder={"请输入脚本..."}
+            toolbar={[
+                {
+                    key: 'reset',
+                    title: '重置',
+                    label: '重置脚本',
+                    backgroundColor: '#ff4d4f',
+                    hoverBackgroundColor: '#ff7875',
+                    textColor: '#fff',
+                    borderColor: '#ff4d4f',
+                    onClick: () => {
+                        const newScript = props.resetScript?.() || '';
+                        handleChange(newScript);
+                    }
+                }
+            ]}
             theme={'light'}
             options={{
                 fontSize: 14,
