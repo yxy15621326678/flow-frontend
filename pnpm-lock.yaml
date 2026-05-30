@@ -199,8 +199,8 @@ importers:
         specifier: workspace:*
         version: link:../flow-types
       '@coding-script/script-engine':
-        specifier: ^0.0.5
-        version: 0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^0.0.6
+        version: 0.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@flowgram.ai/export-plugin':
         specifier: 1.0.8
         version: 1.0.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -704,8 +704,8 @@ packages:
       react: '>=18'
       react-dom: '>=18'
 
-  '@coding-script/script-engine@0.0.5':
-    resolution: {integrity: sha512-Hbnj4aYAiewymhgbB3kdB3Aw4k90D5WB2rrw26Nlgyn5fQwCvAsdcNJylmuYPYY/HTPACK6Ev4y7XYLqS8nhPw==}
+  '@coding-script/script-engine@0.0.6':
+    resolution: {integrity: sha512-XppCh+xcrmFTO7oWdk8d4Io8iGRD26gV/+UzsflKdosiY2hbUntsOJ1pecukkjBjdZHOVBh7VPWwXcHT4FE+MA==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -4376,7 +4376,7 @@ snapshots:
       - '@types/react'
       - redux
 
-  '@coding-script/script-engine@0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@coding-script/script-engine@0.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@codemirror/autocomplete': 6.20.1
       '@codemirror/commands': 6.10.2
