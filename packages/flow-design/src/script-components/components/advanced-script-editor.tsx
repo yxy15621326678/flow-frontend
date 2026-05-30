@@ -1,6 +1,8 @@
 import React from "react";
 import { GroovyScriptContent } from "@/script-components/components/groovy-script-modal";
 import { GroovyCodeEditor } from '@/components/groovy-code';
+import { compile } from "@/api/script";
+import { message } from "antd";
 
 export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
 
@@ -13,8 +15,6 @@ export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
         }
     };
 
-
-
     return (
         <GroovyCodeEditor
             value={script}
@@ -22,6 +22,18 @@ export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
             readonly={readonly}
             onChange={handleChange}
             placeholder={"请输入脚本..."}
+            onCompile={(code) => {
+                console.log('编译脚本:', code);
+                compile({ script: code }).then((res: any) => {
+                    if (res.success) {
+                        message.success('脚本编译成功');
+                    } else {
+                        message.error('脚本编译失败: ' + res.message);
+                    }
+                }).catch(err => {
+                    message.error('脚本编译请求失败');
+                });
+            }}
             toolbar={[
                 {
                     key: 'reset',

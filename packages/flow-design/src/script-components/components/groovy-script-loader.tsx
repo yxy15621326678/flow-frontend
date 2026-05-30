@@ -1,5 +1,4 @@
 import { getScript, save } from '@/api/script';
-import { message } from 'antd';
 import React from 'react';
 
 export interface GroovyScriptLoaderProps {
@@ -29,9 +28,7 @@ export const GroovyScriptLoader: React.FC<GroovyScriptLoaderProps> = (props) => 
             key: scriptKey,
             script: script
         }).then((res: any) => {
-            if (res.success) {
-                message.success('规则脚本已经更新');
-            }
+
         });
     }
 

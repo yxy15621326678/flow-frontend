@@ -10,6 +10,7 @@ interface GroovyCodeEditorProps {
     scriptKey?: string;
     readonly?: boolean;
     onChange?: (value: string) => void;
+    onCompile?: (code: string) => void;
     resetScript?: () => string;
     placeholder?: string;
     theme?: 'dark' | 'light';
@@ -53,8 +54,7 @@ export const GroovyCodeEditor: React.FC<GroovyCodeEditorProps> = (props) => {
             enableFullscreen={true}
             enableThemeToggle={true}
             onCompile={(code) => {
-                console.log('编译脚本:', code);
-                message.success('脚本编译测试已提交');
+                props.onCompile?.(code);
             }}
         />
     )
