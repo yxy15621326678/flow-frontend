@@ -1,6 +1,6 @@
 {
   "name": "@coding-flow/flow-design",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "flow-engine design components ",
   "type": "module",
   "keywords": [
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "~6.1.0",
-    "@coding-script/script-engine": "^0.0.6",
+    "@coding-script/script-engine": "^0.0.7",
     "@coding-flow/flow-core": "workspace:*",
     "@coding-flow/flow-icons": "workspace:*",
     "@coding-flow/flow-pc-ui": "workspace:*",
