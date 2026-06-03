@@ -1,6 +1,8 @@
 import React from "react";
 import {ApprovalLayoutProps, ApprovalState} from "@/typings";
 import {ApprovalPresenter} from "@/presenters";
+import { FieldPermission,FlowForm } from "@coding-flow/flow-types";
+import { MetaService } from "@/service/meta-service";
 
 export class ApprovalContextScope {
     private readonly presenter: ApprovalPresenter;
@@ -22,6 +24,12 @@ export class ApprovalContextScope {
 
     public getInitData(){
         return this.props.initData;
+    }
+
+    public convertMeta(form:FlowForm | undefined, permissions: FieldPermission[]){
+        const metaService = new MetaService(form, permissions);
+        const data = metaService.getFormMeta();
+        return data;
     }
 
 

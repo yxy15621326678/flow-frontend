@@ -16,6 +16,10 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
     const flowForm = state.flow?.form;
     const fieldPermissions = state.flow?.fieldPermissions || [];
 
+    const formMeta = React.useMemo(() => {
+        return context.convertMeta(flowForm || undefined, fieldPermissions);
+    }, [flowForm,fieldPermissions]);
+
     // 是否可合并审批
     const mergeable = state.flow?.mergeable || false;
     const todos = state.flow?.todos || [];
@@ -66,14 +70,14 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
         context.getPresenter().getFlowActionPresenter().setSubmitRecordIds(recordIds);
     }
 
-    if (ViewComponent && flowForm) {
+    if (ViewComponent && formMeta) {
         if (mergeable) {
             return (
                 <ViewComponent
                     mergeable={mergeable}
                     fieldPermissions={fieldPermissions}
                     review={review}
-                    meta={flowForm}
+                    meta={formMeta}
                     initData={context.getInitData()}
                     formList={formList as any}
                     onValuesChange={props.onValuesChange}
@@ -91,7 +95,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
                         fieldPermissions={fieldPermissions}
                         review={review}
                         initData={context.getInitData()}
-                        meta={flowForm}
+                        meta={formMeta}
                         form={item.form as any}
                         onValuesChange={props.onValuesChange}
                     />

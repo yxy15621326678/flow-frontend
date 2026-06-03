@@ -1,7 +1,7 @@
 import React from "react";
-import {useApprovalContext} from "@coding-flow/flow-approval-presenter";
-import {ViewBindPlugin} from "@coding-flow/flow-core";
-import {FlowFormView} from "@coding-flow/flow-mobile-form";
+import { useApprovalContext } from "@coding-flow/flow-approval-presenter";
+import { ViewBindPlugin } from "@coding-flow/flow-core";
+import { FlowFormView } from "@coding-flow/flow-mobile-form";
 import { createFormInstance } from "@coding-form/form-engine";
 
 interface FormViewComponentProps {
@@ -9,12 +9,16 @@ interface FormViewComponentProps {
 }
 
 export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
-    const {state, context} = useApprovalContext();
+    const { state, context } = useApprovalContext();
     const review = state.review || false;
     const ViewComponent = ViewBindPlugin.getInstance().get(state.flow?.view || 'default') || FlowFormView;
 
     const flowForm = state.flow?.form;
     const fieldPermissions = state.flow?.fieldPermissions || [];
+
+    const formMeta = React.useMemo(() => {
+        return context.convertMeta(flowForm || undefined, fieldPermissions);
+    }, [flowForm, fieldPermissions]);
 
     // 是否可合并审批
     const mergeable = state.flow?.mergeable || false;
@@ -64,7 +68,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
         context.getPresenter().getFlowActionPresenter().setSubmitRecordIds(recordIds);
     }
 
-    if (ViewComponent && flowForm) {
+    if (ViewComponent && formMeta) {
         if (mergeable) {
             return (
                 <ViewComponent
@@ -72,7 +76,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
                     fieldPermissions={fieldPermissions}
                     initData={context.getInitData()}
                     review={review}
-                    meta={flowForm}
+                    meta={formMeta}
                     formList={formList as any}
                     onValuesChange={props.onValuesChange}
                     onMergeRecordIdsSelected={handleMergeRecordIdsSelected}
@@ -89,7 +93,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
                         mergeable={mergeable}
                         fieldPermissions={fieldPermissions}
                         review={review}
-                        meta={flowForm}
+                        meta={formMeta}
                         form={item.form}
                         onValuesChange={props.onValuesChange}
                     />
