@@ -1,5 +1,5 @@
 // Tab布局类型
-import {FlowForm,NodeType,FlowAction} from "@coding-flow/flow-types";
+import { FlowForm, NodeType, FlowAction } from "@coding-flow/flow-types";
 
 export type TabPanelType = 'base' | 'form' | 'flow' | 'setting';
 
@@ -9,15 +9,15 @@ export const LayoutHeaderHeight = 50;
 
 export interface DesignPanelProps {
     // 流程编码
-    id?:string
+    id?: string
     // 是否开启
     open: boolean;
     // 关闭
     onClose?: () => void;
     // drawer样式类
-    drawerClassName?:string;
+    drawerClassName?: string;
     // 样式类
-    className?:string;
+    className?: string;
 }
 
 
@@ -32,61 +32,63 @@ export interface Workflow {
     // 流程表单
     form: FlowForm;
     // 流程创建人脚本
-    operatorCreateScript:string;
+    operatorCreateScript: string;
     // 流程策略
-    strategies?:any[];
+    strategies?: any[];
     // 流程节点
-    nodes?:FlowNode[];
+    nodes?: FlowNode[];
 }
 
 
 // 流程节点
-export interface FlowNode{
+export interface FlowNode {
     // 节点id
-    id:string;
+    id: string;
     // 节点名称
-    name:string;
+    name: string;
     // 节点类型
-    type:NodeType;
+    type: NodeType;
     // 节点优先级
-    order:number;
+    order: number;
     // 节点动作
-    actions:FlowAction[];
+    actions: FlowAction[];
     // 节点策略
-    strategies:any[];
+    strategies: any[];
     // 节点条件块
-    blocks?:FlowNode[];
+    blocks?: FlowNode[];
     // 节点表达式
-    script?:string;
+    script?: string;
+    // 视图代码
+    code?: string;
     // 节点视图
-    view?:string;
+    view?: string;
     // 流程展示节点
-    display?:boolean;
+    display?: boolean;
 }
 
 // 全局状态
 export interface State {
-    view:{
+    view: {
         tabPanel: TabPanelType;
     },
-    workflow:Workflow
+    workflow: Workflow
 }
 
 // 初始化数据
 export const initStateData: State = {
-    view:{
-        tabPanel:'base'
+    view: {
+        tabPanel: 'base'
     },
-    workflow:{
-        id:'',
-        title:'',
-        code:'',
-        operatorCreateScript:'',
-        form:{
-            code:'',
-            name:'',
-            fields:[],
-            subForms:[]
+    workflow: {
+        id: '',
+        title: '',
+        code: '',
+        operatorCreateScript: '',
+        form: {
+            code: '',
+            name: '',
+            fields: [],
+            subForms: []
         }
     }
 }
@@ -94,11 +96,11 @@ export const initStateData: State = {
 
 export interface DesignPanelApi {
 
-    create():Promise<Workflow>;
+    create(): Promise<Workflow>;
 
-    load(id:string): Promise<Workflow>;
+    load(id: string): Promise<Workflow>;
 
-    save(body:any): Promise<void>;
+    save(body: any): Promise<void>;
 
-    createNode(type:string):Promise<FlowNode>;
+    createNode(type: string): Promise<FlowNode>;
 }

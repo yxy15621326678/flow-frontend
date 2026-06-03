@@ -135,7 +135,7 @@ export interface ProcessNodeOperator {
     // 人员名称
     name: string;
     // 是否流程管理员
-    flowManager:boolean;
+    flowManager: boolean;
     // 其他属性
     [key: string]: any;
 }
@@ -232,7 +232,7 @@ export interface ProcessNode {
     // 审批状态
     approveState: 'PASS' | 'PROCESSING' | 'PENDING' | 'ERROR';
     // 人员模式
-    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT' |'NO_OPERATOR';
+    operatorStrategy: 'OPERATOR_LIST' | 'INITIATOR_SELECT' | 'APPROVER_SELECT' | 'NO_OPERATOR';
     // 审批人员
     operators: FlowApprovalOperator[]
 }
@@ -281,6 +281,8 @@ export interface FlowContent {
     title: string;
     // 视图名称
     view: string;
+    // 视图代码
+    code: string;
     // 是否必填意见
     adviceRequired: boolean;
     // 是否必填签名

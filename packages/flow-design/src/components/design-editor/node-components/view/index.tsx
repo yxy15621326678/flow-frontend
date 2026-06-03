@@ -1,9 +1,12 @@
 import React from "react";
-import {Form, Input} from "antd";
-import {Field, FieldRenderProps} from "@flowgram.ai/fixed-layout-editor";
+import { Button, Form, Input, Space } from "antd";
+import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
+import { BugOutlined } from "@ant-design/icons";
+import { ViewCodeDrawer } from "@/script-components/components/view-code-drawer";
 
 export const View = () => {
     const [form] = Form.useForm();
+    const [visible, setVisible] = React.useState(false);
 
     return (
         <Form
@@ -21,11 +24,35 @@ export const View = () => {
                     name={"view"}
                     render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
                         <>
-                            <Input value={value} onChange={onChange} />
+                            <Space.Compact style={{ width: '100%' }}>
+                                <Input value={value} onChange={onChange} />
+                                <Button
+                                    icon={<BugOutlined />}
+                                    onClick={() => {
+                                        setVisible(true);
+                                    }}
+                                    style={{ borderRadius: '0 6px 6px 0' }}
+                                >
+                                    代码
+                                </Button>
+                            </Space.Compact>
                         </>
                     )}
                 />
             </Form.Item>
+
+            <Field
+                name={"code"}
+                render={({ field: { value, onChange } }: FieldRenderProps<any>) => (
+                    <>
+                        <ViewCodeDrawer
+                            code={value}
+                            visible={visible}
+                            onClose={() => setVisible(false)}
+                        />
+                    </>
+                )}
+            />
         </Form>
     )
 };
