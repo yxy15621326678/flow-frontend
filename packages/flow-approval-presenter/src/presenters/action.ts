@@ -47,7 +47,7 @@ export class FlowActionPresenter {
             delete formData.recordId;
         }
 
-        const id = recordId || this.state.flow?.workId || '';
+        const id = recordId || this.state.flow?.workCode || '';
         return await this.api.processNodes({
             id,
             formData,
@@ -82,7 +82,7 @@ export class FlowActionPresenter {
 
     private async submitAction(actionId: string, formData: any, params?: any) {
         const recordId = formData.recordId || this.state.flow?.recordId;
-        const workId = this.state.flow?.workId;
+        const workCode = this.state.flow?.workCode || '';
 
         if (formData.recordId) {
             delete formData.recordId;
@@ -100,7 +100,7 @@ export class FlowActionPresenter {
             return await this.api.action(request, this.mockKey);
         } else {
             const createRequest = {
-                workId,
+                workCode,
                 formData,
                 actionId,
             }
