@@ -1,7 +1,7 @@
 import React from "react";
-import {FormViewProps} from "@coding-flow/flow-types";
-import {FlowFormView as FormView} from "@/components/form/view";
-import {FlowTable} from "@/components/table";
+import { FormViewProps } from "@coding-flow/flow-types";
+import { FlowFormView as FormView } from "@/components/form/view";
+import { FlowTable } from "@/components/table";
 
 export const FlowFormView: React.FC<FormViewProps> = (props) => {
 
@@ -9,7 +9,7 @@ export const FlowFormView: React.FC<FormViewProps> = (props) => {
 
     const formList = props.formList || [];
 
-    if(props.mergeable){
+    if (props.mergeable) {
         return (
             <FlowTable
                 formList={formList}
@@ -23,7 +23,7 @@ export const FlowFormView: React.FC<FormViewProps> = (props) => {
         )
     }
 
-    if(form) {
+    if (form) {
         return (
             <FormView
                 form={form}

@@ -12,6 +12,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
     const {state, context} = useApprovalContext();
     const review = state.review || false;
     const ViewComponent = ViewBindPlugin.getInstance().get(state.flow?.view || 'default') || FlowFormView;
+    const viewCode = state.flow?.code;
 
     const flowForm = state.flow?.form;
     const fieldPermissions = state.flow?.fieldPermissions || [];
@@ -82,6 +83,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
                     formList={formList as any}
                     onValuesChange={props.onValuesChange}
                     onMergeRecordIdsSelected={handleMergeRecordIdsSelected}
+                    viewCode={viewCode}
                 />
             )
         }
@@ -98,6 +100,7 @@ export const FormViewComponent: React.FC<FormViewComponentProps> = (props) => {
                         meta={formMeta}
                         form={item.form as any}
                         onValuesChange={props.onValuesChange}
+                        viewCode={viewCode}
                     />
                 ))}
             </>

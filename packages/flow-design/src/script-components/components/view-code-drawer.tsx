@@ -1,4 +1,6 @@
-import { Button, Drawer } from "antd";
+import { getScript, save } from "@/api/node-view";
+import { JavaScriptCodeEditor } from "@/components/js-code";
+import { Button, Drawer, message, Modal } from "antd";
 import React from "react";
 
 
@@ -6,6 +8,57 @@ interface ViewCodeDrawerProps {
     visible: boolean;
     onClose: () => void;
     code: string;
+}
+
+
+const JavaScriptCodeContent: React.FC<{ code: string }> = ({ code }) => {
+
+    const [script, setScript] = React.useState<string>('');
+
+    React.useEffect(() => {
+        if (code) {
+            getScript(code).then((res: any) => {
+                setScript(res.data);
+            });
+        }
+
+        return () => {
+            setScript('');
+        };
+
+    }, [code]);
+
+    const handleSave = () => {
+        save({
+            code,
+            script: script,
+        }).then((res: any) => {
+            message.success('保存成功');
+        });
+    };
+
+    return (
+        <>
+            <JavaScriptCodeEditor
+                value={script}
+                onChange={setScript}
+                toolbar={[
+                    {
+                        key: 'save',
+                        title: '保存',
+                        label: '保存代码',
+                        backgroundColor: '#1890ff',
+                        hoverBackgroundColor: '#40a9ff',
+                        textColor: '#fff',
+                        borderColor: '#1890ff',
+                        onClick: () => {
+                            handleSave();
+                        }
+                    }
+                ]}
+            />
+        </>
+    );
 }
 
 export const ViewCodeDrawer: React.FC<ViewCodeDrawerProps> = (props) => {
@@ -16,6 +69,7 @@ export const ViewCodeDrawer: React.FC<ViewCodeDrawerProps> = (props) => {
             title="视图代码"
             open={props.visible}
             onClose={props.onClose}
+            destroyOnHidden={true}
             size={'100%'}
             extra={
                 <Button onClick={props.onClose}>
@@ -23,7 +77,7 @@ export const ViewCodeDrawer: React.FC<ViewCodeDrawerProps> = (props) => {
                 </Button>
             }
         >
-            <div>代码内容 {props.code}</div>
+            <JavaScriptCodeContent code={props.code} />
         </Drawer>
     );
 }

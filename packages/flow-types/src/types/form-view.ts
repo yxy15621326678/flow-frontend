@@ -17,6 +17,8 @@ export interface FormData {
 export interface FormViewProps {
     /** 流程合并 */
     mergeable: boolean;
+    /** 节点代码 */
+    viewCode?: string;
     /** 合并表单操控对象 */
     formList?: FormData[];
     /** 表单操控对象 */

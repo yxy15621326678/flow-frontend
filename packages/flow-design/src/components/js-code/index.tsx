@@ -1,12 +1,10 @@
 import React from 'react';
-import { message } from 'antd';
 import { ScriptCodeEditor, ScriptMetadata, ToolbarItem } from '@coding-script/script-engine';
-import { getMetadata } from '@/api/script';
 
-interface GroovyCodeEditorProps {
+interface JavaScriptCodeEditorProps {
     title?: string;
     value?: string;
-    toolbar?:ToolbarItem[];
+    toolbar?: ToolbarItem[];
     scriptKey?: string;
     readonly?: boolean;
     onChange?: (value: string) => void;
@@ -21,27 +19,15 @@ interface GroovyCodeEditorProps {
     };
 }
 
-export const GroovyCodeEditor: React.FC<GroovyCodeEditorProps> = (props) => {
+export const JavaScriptCodeEditor: React.FC<JavaScriptCodeEditorProps> = (props) => {
 
-    const title = props.title || '脚本编辑器';
-
-    const [metadata, setMetadata] = React.useState<ScriptMetadata>();
-
-    React.useEffect(() => {
-        if (props.scriptKey) {
-            getMetadata(props.scriptKey).then(res => {
-                setMetadata(res.data);
-            }).catch(err => {
-                message.error('获取脚本元数据失败');
-            });
-        }
-    }, [props.scriptKey]);
+    const title = props.title || 'javscript脚本编辑器';
 
 
     return (
         <ScriptCodeEditor
             title={title}
-            language="groovy"
+            language="javascript"
             toolbar={props.toolbar}
             value={props.value}
             onChange={props.onChange}
@@ -49,14 +35,14 @@ export const GroovyCodeEditor: React.FC<GroovyCodeEditorProps> = (props) => {
             readonly={props.readonly}
             options={props.options}
             defaultTheme={props.theme || 'light'}
-            metadata={metadata}
-            enableCompile={true}
-            enableFormat={true}
+            enableCompile={false}
+            enableFormat={false}
             enableFullscreen={true}
             enableThemeToggle={true}
             onCompile={(code) => {
                 props.onCompile?.(code);
             }}
+
         />
     )
 };
