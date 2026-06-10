@@ -44,6 +44,10 @@ export const createNode = (type:string) => {
     return httpClient.post('/api/cmd/workflow/create-node',{type});
 }
 
+export const createCustomAction = () => {
+    return httpClient.post('/api/cmd/workflow/create-custom-action',{});
+}
+
 export const save = (body:any) => {
     return httpClient.post('/api/cmd/workflow/save',body);
 }

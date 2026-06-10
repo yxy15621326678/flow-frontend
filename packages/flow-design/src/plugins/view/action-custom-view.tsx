@@ -1,14 +1,20 @@
 import React from "react";
-import {ActionCustomScriptUtils} from "@/script-components/services/action-custom";
-import {GroovyCodeEditor} from "@/components/groovy-code";
-import {Select} from "antd";
-import {ActionCustomViewPlugin, VIEW_KEY} from "@/plugins/action-custom-view-type";
-import {ViewBindPlugin} from "@coding-flow/flow-core";
+import { Button, Input, Space } from "antd";
+import { ActionCustomViewPlugin, VIEW_KEY } from "@/plugins/action-custom-view-type";
+import { ViewBindPlugin } from "@coding-flow/flow-core";
+import { GroovyScriptModal } from "@/script-components/components/groovy-script-modal";
+import { AdvancedScriptEditor } from "@/script-components/components/advanced-script-editor";
+import { ScriptType } from "@/script-components/typings";
+import { EditOutlined } from "@ant-design/icons";
+import { GroovyScriptConvertorUtil } from "@coding-script/script-engine";
+import { SCRIPT_DEFAULT_CUSTOM } from "@/script-components/default-script";
 
 
 export const ActionCustomView: React.FC<ActionCustomViewPlugin> = (props) => {
 
     const ActionCustomViewComponent = ViewBindPlugin.getInstance().get(VIEW_KEY);
+
+    const [visible, setVisible] = React.useState(false);
 
     if (ActionCustomViewComponent) {
         return (
@@ -16,56 +22,50 @@ export const ActionCustomView: React.FC<ActionCustomViewPlugin> = (props) => {
         );
     }
 
-    const trigger = React.useMemo(() => {
-        if (props.value) {
-            return ActionCustomScriptUtils.getTrigger(props.value);
-        }
-        return undefined;
-    }, [props.value]);
-
-    const handleChangeNodeType = (value: string) => {
-        const script = props.value;
-        if (script) {
-            const groovy = ActionCustomScriptUtils.update(value, script);
-            props.onChange?.(groovy);
-        }
-    }
-
     return (
-        <div
-            style={{
-                marginTop: "8px",
-                padding: "8px",
-            }}
-        >
-            <div style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                marginBottom: "8px",
-            }}>
-                <span>触发动作:</span>
-                <Select
-                    size={"small"}
+        <>
+            <Space.Compact>
+                <Space.Addon
                     style={{
-                        width: '200px',
-                        marginLeft: "10px",
+                        width: '150px',
                     }}
-                    value={trigger}
-                    placeholder={"请选择触发动作类型"}
-                    onChange={handleChangeNodeType}
-                    options={props.options}
+                >
+                    触发动作
+                </Space.Addon>
+                <Input
+                    style={{
+                        width: '150px',
+                    }}
+                    value={GroovyScriptConvertorUtil.getScriptTitle(props.value || '')}
+                    readOnly
                 />
-            </div>
+                <Button
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                        setVisible(true);
+                    }}
+                >
+                    编辑
+                </Button>
+            </Space.Compact>
 
-            <GroovyCodeEditor
-                value={props.value}
-                onChange={props.onChange}
-                placeholder={"请输入自定义脚本"}
-                options={{
-                    minHeight: 200
+            <GroovyScriptModal
+                type={ScriptType.CUSTOM_ACTION}
+                variables={[]}
+                open={visible}
+                onCancel={() => {
+                    setVisible(false)
                 }}
+                resetScript={()=>{
+                    return SCRIPT_DEFAULT_CUSTOM;
+                }}
+                scriptKey={props.scriptKey}
+                script={props.value || ""}
+                onConfirm={(script) => {
+                    props.onChange?.(script);
+                }}
+                content={AdvancedScriptEditor}
             />
-        </div>
+        </>
     )
 }

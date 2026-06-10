@@ -1,12 +1,12 @@
 import React from "react";
-import {Button, Form, Popconfirm, Space, Switch} from "antd";
-import {Table} from "@coding-flow/flow-pc-ui";
-import {useNodeRenderContext} from "@/components/design-editor/hooks/use-node-render-context";
-import {PlusOutlined} from "@ant-design/icons";
-import {actionOptions} from "@coding-flow/flow-types";
-import {ActionConfigModal} from "@/script-components/modal/action-config-modal";
-import {FlowActionListPresenter} from "./presenter";
-import {SCRIPT_DEFAULT_CUSTOM} from "@/script-components/default-script";
+import { Button, Form, Popconfirm, Space, Switch } from "antd";
+import { Table } from "@coding-flow/flow-pc-ui";
+import { useNodeRenderContext } from "@/components/design-editor/hooks/use-node-render-context";
+import { PlusOutlined } from "@ant-design/icons";
+import { actionOptions } from "@coding-flow/flow-types";
+import { ActionConfigModal } from "@/script-components/modal/action-config-modal";
+import { FlowActionListPresenter } from "./presenter";
+import { createCustomAction } from "@/api/workflow";
 
 interface ActionTableProps {
     value: any[];
@@ -14,7 +14,7 @@ interface ActionTableProps {
 }
 
 export const ActionTable: React.FC<ActionTableProps> = (props) => {
-    const {node} = useNodeRenderContext();
+    const { node } = useNodeRenderContext();
     const presenter = new FlowActionListPresenter(props.value, props.onChange);
     const datasource = presenter.getDatasource();
     const [visible, setVisible] = React.useState(false);
@@ -100,16 +100,23 @@ export const ActionTable: React.FC<ActionTableProps> = (props) => {
             <Table
                 toolBarRender={() => [
                     <Button
-                        icon={<PlusOutlined/>}
+                        icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
-                            form.setFieldsValue({
-                                script: SCRIPT_DEFAULT_CUSTOM,
-                                type: "CUSTOM",
+                            createCustomAction().then(res => {
+                                if (res.success) {
+                                    const scriptKey = res.data;
+                                    form.setFieldsValue({
+                                        script: scriptKey,
+                                        type: "CUSTOM",
+                                    })
+                                    setVisible(true);
+                                }
                             })
-                            setVisible(true);
                         }}
-                    >自定义按钮</Button>
+                    >
+                        自定义按钮
+                    </Button>
                 ]}
                 columns={columns()}
                 dataSource={datasource}

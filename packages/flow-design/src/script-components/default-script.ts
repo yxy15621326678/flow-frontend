@@ -80,7 +80,7 @@ def run(request){
 
 // 自定义脚本，默认返回通过
 export const SCRIPT_DEFAULT_CUSTOM =
-`// @SCRIPT_TITLE 默认条件 触发通过
+`// @SCRIPT_TITLE 触发通过
 // @SCRIPT_META {"trigger":"PASS"}
 def run(request){ 
     return 'PASS'; 
