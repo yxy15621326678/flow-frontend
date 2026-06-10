@@ -52,12 +52,12 @@ export const ActionForm:React.FC<ActionFormProps> = (props)=>{
                 </Col>
                 <Col span={24}>
                     <Form.Item
-                        name={"style"}
+                        name={"display"}
                         label={"按钮样式"}
                     >
                         <ActionStyle/>
                     </Form.Item>
-                </Col>
+                </Col>                
             </Row>
 
             {FormAction && (

@@ -2,15 +2,20 @@ import { getScript, save } from '@/api/script';
 import React from 'react';
 
 export interface GroovyScriptLoaderProps {
+    // script key
     value?: string;
+    // onChange 
     onChange?: (value: string) => void;
-    content: React.ComponentType<GroovyScriptContent>;
+    content: React.ComponentType<GroovyScriptLoaderContent>;
 }
 
 
-export interface GroovyScriptContent {
+export interface GroovyScriptLoaderContent {
+    // script key 
     scriptKey: string;
+    // script 
     value?: string;
+    // script on change
     onChange?: (value: string) => void;
 }
 

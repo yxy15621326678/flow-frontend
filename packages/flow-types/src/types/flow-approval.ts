@@ -84,6 +84,9 @@ export interface DisplayStyle {
     borderSize?: string;
     // 边框圆角
     borderRadius?: string;
+    // 展示按钮控制脚本
+    script?:string;    
+
 }
 
 /**

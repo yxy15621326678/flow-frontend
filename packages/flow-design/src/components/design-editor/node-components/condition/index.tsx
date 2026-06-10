@@ -5,10 +5,10 @@ import { GroovyScriptPreview } from "@/script-components/components/groovy-scrip
 import { EditOutlined } from "@ant-design/icons";
 import { ConditionConfigModal } from "@/script-components/modal/condition-config-modal";
 import { useScriptVariables } from "@/components/design-editor/hooks/use-script-variables";
-import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+import { GroovyScriptLoaderContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 
-const ConditionConfigContent: React.FC<GroovyScriptContent> = (props) => {
+const ConditionConfigContent: React.FC<GroovyScriptLoaderContent> = (props) => {
 
     const [visible, setVisible] = React.useState(false);
     const scriptVariables = useScriptVariables();

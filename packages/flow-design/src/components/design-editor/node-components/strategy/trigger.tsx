@@ -4,10 +4,10 @@ import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
 import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
 import { EditOutlined } from "@ant-design/icons";
 import { TriggerConfigModal } from "@/script-components/modal/trigger-config-modal";
-import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+import { GroovyScriptLoaderContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 
-const TriggerConfigContent: React.FC<GroovyScriptContent> = (props) => {
+const TriggerConfigContent: React.FC<GroovyScriptLoaderContent> = (props) => {
 
     const [visible, setVisible] = React.useState(false);
     const value = props.value || '';

@@ -30,6 +30,8 @@ export interface GroovyScriptModalProps {
 
 
 export interface GroovyScriptContent {
+    /** 脚本标题 **/
+    title?:string;
     /** 脚本类型 */
     type: ScriptType;
     /** 当前脚本 */

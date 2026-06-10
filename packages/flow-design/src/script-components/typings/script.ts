@@ -20,6 +20,10 @@ export enum ScriptType {
     ROUTER = 'ROUTER',
     /** 子流程节点脚本 */
     SUB_PROCESS = 'SUB_PROCESS',
+    /** 自定义操作 */
+    CUSTOM_ACTION = 'CUSTOM_ACTION',
+    /** 按钮展示条件 */
+    ACTION_DISPLAY = 'ACTION_DISPLAY'
 }
 
 /**

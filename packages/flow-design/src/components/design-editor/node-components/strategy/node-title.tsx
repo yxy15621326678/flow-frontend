@@ -5,10 +5,10 @@ import { Field, FieldRenderProps } from '@flowgram.ai/fixed-layout-editor';
 import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
 import { NodeTitleConfigModal } from "@/script-components/modal/node-title-config-modal";
 import { useScriptVariables } from "@/components/design-editor/hooks/use-script-variables";
-import { GroovyScriptContent, GroovyScriptLoader } from '@/script-components/components/groovy-script-loader';
+import { GroovyScriptLoaderContent, GroovyScriptLoader } from '@/script-components/components/groovy-script-loader';
 
 
-const NodeTitleConfigContent: React.FC<GroovyScriptContent> = (props) => {
+const NodeTitleConfigContent: React.FC<GroovyScriptLoaderContent> = (props) => {
 
     const [visible, setVisible] = React.useState(false);
     const scriptVariables = useScriptVariables();

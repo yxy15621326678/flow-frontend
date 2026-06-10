@@ -1,20 +1,87 @@
-import {Col, ColorPicker, Input, Row, Space} from "antd";
+import { Button, Col, ColorPicker, Input, Row, Space } from "antd";
 import React from "react";
-import {DisplayStyle} from "@coding-flow/flow-types";
+import { GroovyScriptLoader, GroovyScriptLoaderContent } from "../groovy-script-loader";
+import { AdvancedScriptEditor } from "../advanced-script-editor";
+import { ScriptType } from "@/script-components/typings";
+import { GroovyScriptConvertorUtil } from "@coding-script/script-engine";
+import { GroovyScriptModal, GroovyScriptContent } from "../groovy-script-modal";
+import { EditOutlined } from "@ant-design/icons";
+import { DisplayStyle } from "@coding-flow/flow-types";
 
 
 interface ActionStyleProps {
-    value?: string;
-    onChange?: (value: string) => void;
+    value?: any;
+    onChange?: (value: any) => void;
+}
+
+
+const ActionScriptContent: React.FC<GroovyScriptContent> = (props) => {
+    return (
+        <AdvancedScriptEditor
+            {...props}
+        />
+    )
+}
+
+const ActionScript: React.FC<GroovyScriptLoaderContent> = (props) => {
+
+    const [visible, setVisible] = React.useState(false);
+
+    return (
+        <>
+            <Space.Compact>
+                <Space.Addon
+                    style={{
+                        width: '150px',
+                    }}
+                >
+                    <span>显示条件</span>
+                </Space.Addon>
+                <Input
+                    readOnly
+                    style={{
+                        width: '150px',
+                    }}
+                    value={GroovyScriptConvertorUtil.getScriptTitle(props.value || '')}
+                />
+                <Button
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                        setVisible(true);
+                    }}
+                >
+                    修改
+                </Button>
+
+            </Space.Compact>
+
+            <GroovyScriptModal
+                type={ScriptType.ACTION_DISPLAY}
+                variables={[]}
+                scriptKey={props.scriptKey}
+                script={props.value || ''}
+                open={visible}
+                onCancel={() => {
+                    setVisible(false);
+                }}
+                onConfirm={(value) => {
+                    props.onChange?.(value);
+                    setVisible(false);
+                }}
+                content={ActionScriptContent}
+            />
+
+        </>
+    )
 }
 
 
 export const ActionStyle: React.FC<ActionStyleProps> = (props) => {
 
-    const [style, setStyle] = React.useState<DisplayStyle>(props.value ? JSON.parse(props.value) : {});
+    const [style, setStyle] = React.useState<DisplayStyle>(props.value || {} as any);
 
     React.useEffect(() => {
-        props.onChange && props.onChange(JSON.stringify(style));
+        props.onChange && props.onChange(style);
     }, [style]);
 
     return (
@@ -30,7 +97,7 @@ export const ActionStyle: React.FC<ActionStyleProps> = (props) => {
                             <span>背景颜色</span>
                         </Space.Addon>
                         <ColorPicker
-                            value={style.backgroundColor}
+                            value={style.backgroundColor || ''}
                             onChange={(value) => {
                                 if (value) {
                                     setStyle(prevState => {
@@ -54,7 +121,7 @@ export const ActionStyle: React.FC<ActionStyleProps> = (props) => {
                             <span>边框颜色</span>
                         </Space.Addon>
                         <ColorPicker
-                            value={style.borderColor}
+                            value={style.borderColor || ''}
                             onChange={(value) => {
                                 if (value) {
                                     setStyle(prevState => {
@@ -121,6 +188,12 @@ export const ActionStyle: React.FC<ActionStyleProps> = (props) => {
                             }}
                         />
                     </Space.Compact>
+                </Col>
+                <Col span={24}>
+                    <GroovyScriptLoader
+                        content={ActionScript}
+                        value={style.script}
+                    />
                 </Col>
             </Row>
 

@@ -17,6 +17,7 @@ export const AdvancedScriptEditor: React.FC<GroovyScriptContent> = (props) => {
 
     return (
         <GroovyCodeEditor
+            title={props.title}
             value={script}
             scriptKey={props.scriptKey}
             readonly={readonly}

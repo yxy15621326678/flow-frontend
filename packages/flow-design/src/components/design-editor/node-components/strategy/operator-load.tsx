@@ -4,7 +4,7 @@ import { Field, FieldRenderProps } from "@flowgram.ai/fixed-layout-editor";
 import { EditOutlined } from "@ant-design/icons";
 import { GroovyScriptPreview } from "@/script-components/components/groovy-script-preview";
 import { OperatorLoadConfigModal } from "@/script-components/modal/operator-load-config-modal";
-import { GroovyScriptContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
+import { GroovyScriptLoaderContent, GroovyScriptLoader } from "@/script-components/components/groovy-script-loader";
 
 const SELECT_TYPE_OPTIONS = [
     { label: '脚本指定', value: 'SCRIPT' },
@@ -13,7 +13,7 @@ const SELECT_TYPE_OPTIONS = [
 ];
 
 
-const OperatorLoadScriptContent: React.FC<GroovyScriptContent> = (props) => {
+const OperatorLoadScriptContent: React.FC<GroovyScriptLoaderContent> = (props) => {
 
     const [visible, setVisible] = React.useState(false);
     const value = props.value || '';

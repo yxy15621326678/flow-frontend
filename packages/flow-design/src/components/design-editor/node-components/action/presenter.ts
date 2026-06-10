@@ -68,7 +68,7 @@ export class FlowActionListPresenter {
     }
 
 
-    public getDatasource(actions: ActionType[]): any[] {
+    public getDatasource(): any[] {
         if (this.data) {
             return this.data.map(item => {
                 const enable = item.enable;
@@ -78,17 +78,7 @@ export class FlowActionListPresenter {
                 }
             });
         }
-        const list = actions.map(type => {
-            const title = actionOptions.filter(value => value.value === type)[0]?.label || '未命名操作';
-            return {
-                id: nanoid(),
-                enable: true,
-                title: title,
-                type: type,
-            } as FlowAction;
-        });
-        this.onChange(list);
-        return list;
+        return [];
     }
 
 

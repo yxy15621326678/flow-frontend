@@ -6,7 +6,6 @@ import {PlusOutlined} from "@ant-design/icons";
 import {actionOptions} from "@coding-flow/flow-types";
 import {ActionConfigModal} from "@/script-components/modal/action-config-modal";
 import {FlowActionListPresenter} from "./presenter";
-import {IdUtils} from "@/utils";
 import {SCRIPT_DEFAULT_CUSTOM} from "@/script-components/default-script";
 
 interface ActionTableProps {
@@ -16,9 +15,8 @@ interface ActionTableProps {
 
 export const ActionTable: React.FC<ActionTableProps> = (props) => {
     const {node} = useNodeRenderContext();
-    const actions = node.getNodeRegistry()?.meta.actions || [];
     const presenter = new FlowActionListPresenter(props.value, props.onChange);
-    const datasource = presenter.getDatasource(actions);
+    const datasource = presenter.getDatasource();
     const [visible, setVisible] = React.useState(false);
     const [form] = Form.useForm();
 
