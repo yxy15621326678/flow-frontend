@@ -13,6 +13,7 @@ export class EventBus {
         return this.instance;
     }
 
+
     public on(eventName: string, callback: Function): void {
         const callbacks = this.events.get(eventName) || [];
         callbacks.push(callback);

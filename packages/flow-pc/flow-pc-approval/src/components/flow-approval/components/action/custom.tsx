@@ -1,12 +1,13 @@
 import React from "react";
-import {FlowActionProps} from "./type";
-import {message} from "antd";
-import {useApprovalContext} from "@coding-flow/flow-approval-presenter";
-import {GroovyScriptConvertorUtil, ViewBindPlugin} from "@coding-flow/flow-core";
-import {ActionFactory} from "@/components/flow-approval/components/action/factory";
-import {CustomStyleButton} from "@/components/flow-approval/components/custom-style-button";
-import {ActionType} from "@coding-flow/flow-types";
-import {APPROVAL_ACTION_CUSTOM_KEY} from "@/components/flow-approval";
+import { FlowActionProps } from "./type";
+import { message } from "antd";
+import { useApprovalContext } from "@coding-flow/flow-approval-presenter";
+import { GroovyScriptConvertorUtil, ViewBindPlugin } from "@coding-flow/flow-core";
+import { ActionFactory } from "@/components/flow-approval/components/action/factory";
+import { CustomStyleButton } from "@/components/flow-approval/components/custom-style-button";
+import { ActionType } from "@coding-flow/flow-types";
+import { APPROVAL_ACTION_CUSTOM_KEY } from "@/components/flow-approval";
+import { EventBus } from "@coding-flow/flow-core";
 
 /**
  * 自定义
@@ -15,13 +16,15 @@ import {APPROVAL_ACTION_CUSTOM_KEY} from "@/components/flow-approval";
  */
 export const CustomAction: React.FC<FlowActionProps> = (props) => {
 
+    console.log('custom11:', props);
+
     const action = props.action;
-    const {context} = useApprovalContext()
+    const { context } = useApprovalContext()
     const actionPresenter = context.getPresenter().getFlowActionPresenter();
 
-    const script = action.script || '';
-    const returnData = GroovyScriptConvertorUtil.getReturnScript(script);
-    const triggerType = returnData.replaceAll('\'', '');
+    const triggerType = action.triggerType;
+    const triggerFrontEvent = action.triggerFrontEvent;
+
 
 
     const ActionView = ViewBindPlugin.getInstance().get(APPROVAL_ACTION_CUSTOM_KEY);
@@ -34,42 +37,50 @@ export const CustomAction: React.FC<FlowActionProps> = (props) => {
         )
     }
 
-    const FlowActionComponent =
-        ActionFactory.getInstance().getFlowActionComponent({
-            ...props.action,
-            type: triggerType as ActionType,
-        });
 
-    if (FlowActionComponent) {
+    if (triggerFrontEvent) {
         return (
-            <FlowActionComponent
-                action={action}
-                onClickCheck={(actionId) => {
-                    if (props.onClickCheck) {
-                        return props.onClickCheck?.(actionId);
+            <CustomStyleButton
+                display={props.action.display}
+                onClick={() => {
+                    if (triggerFrontEvent) {
+                        EventBus.getInstance().emit(triggerFrontEvent);
+                    } else {
+                        if (props.onClickCheck?.(action.id)) {
+                            actionPresenter.action(action.id).then((res) => {
+                                if (res.success) {
+                                    message.success("操作成功");
+                                    context.close();
+                                }
+                            });
+                        }
                     }
-                    return false;
                 }}
+                title={action.title}
             />
         )
     }
 
+    if (triggerType) {
+        const FlowActionComponent =
+            ActionFactory.getInstance().getFlowActionComponent({
+                ...props.action,
+                type: triggerType as ActionType,
+            });
 
-
-    return (
-        <CustomStyleButton
-            display={props.action.display}
-            onClick={() => {
-                if (props.onClickCheck?.(action.id)) {
-                    actionPresenter.action(action.id).then((res) => {
-                        if (res.success) {
-                            message.success("操作成功");
-                            context.close();
+        if (FlowActionComponent) {
+            return (
+                <FlowActionComponent
+                    action={action}
+                    onClickCheck={(actionId) => {
+                        if (props.onClickCheck) {
+                            return props.onClickCheck?.(actionId);
                         }
-                    });
-                }
-            }}
-            title={action.title}
-        />
-    )
+                        return false;
+                    }}
+                />
+            )
+        }
+    }
+
 }

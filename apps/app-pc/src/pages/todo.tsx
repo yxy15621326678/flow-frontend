@@ -1,10 +1,10 @@
 import React from "react";
-import {done, list, notify, todo} from "@/api/record.ts";
-import {ApprovalPanelDrawer, FlowTitle, WorkflowSelectModal} from "@coding-flow/flow-pc-approval";
-import {Table, type TableProps} from "@coding-flow/flow-pc-ui";
-import {Button, Space, Tabs, type TabsProps} from "antd";
+import { done, list, notify, todo } from "@/api/record.ts";
+import { ApprovalPanelDrawer, FlowTitle, WorkflowSelectModal } from "@coding-flow/flow-pc-approval";
+import { Table, type TableProps } from "@coding-flow/flow-pc-ui";
+import { Button, Space, Tabs, type TabsProps } from "antd";
 import dayjs from "dayjs";
-import type {ActionType} from "@coding-flow/flow-core";
+import { EventBus, type ActionType } from "@coding-flow/flow-core";
 
 const TodoPage: React.FC = () => {
 
@@ -33,7 +33,7 @@ const TodoPage: React.FC = () => {
             dataIndex: 'title',
             title: '流程名称',
             render: (value) => {
-                return <FlowTitle title={value}/>
+                return <FlowTitle title={value} />
             }
         },
         {
@@ -182,6 +182,16 @@ const TodoPage: React.FC = () => {
         reloadCurrentTab();
     }, [currentTab]);
 
+
+    React.useEffect(() => {
+        EventBus.getInstance().on('compile', () => {
+            alert('compile')
+        });
+        return () => {
+            EventBus.getInstance().off('compile');
+        }
+    }, []);
+
     return (
         <div>
             <Tabs
@@ -227,6 +237,8 @@ const TodoPage: React.FC = () => {
                     reloadCurrentTab();
                 }}
             />
+
+
         </div>
     )
 }

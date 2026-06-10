@@ -1,6 +1,5 @@
-import {ApprovalState, FlowApprovalApi} from "@/typings";
-import {FormActionContext} from "@coding-flow/flow-types";
-import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
+import { ApprovalState, FlowApprovalApi } from "@/typings";
+import { FormActionContext } from "@coding-flow/flow-types";
 
 export class FlowActionPresenter {
 
@@ -12,9 +11,9 @@ export class FlowActionPresenter {
     private submitRecordIds: number[];
 
     constructor(state: ApprovalState,
-                api: FlowApprovalApi,
-                formActionContext: FormActionContext,
-                mockKey: string) {
+        api: FlowApprovalApi,
+        formActionContext: FormActionContext,
+        mockKey: string) {
         this.state = JSON.parse(JSON.stringify(state));
         this.api = api;
         this.formActionContext = formActionContext;
@@ -68,15 +67,25 @@ export class FlowActionPresenter {
                     return true;
                 }
                 if (action.type === 'CUSTOM') {
-                    const script = action.script || '';
-                    const returnData = GroovyScriptConvertorUtil.getReturnScript(script);
-                    if (returnData.includes('PASS')) {
+                    const triggerType = action.triggerType;
+                    if (triggerType === 'PASS') {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+
+    public getAction(actionId: string) {
+        const actions = this.state.flow?.actions || [];
+        for (const action of actions) {
+            if (action.id === actionId) {
+                return action;
+            }
+        }
+        return null;
     }
 
 

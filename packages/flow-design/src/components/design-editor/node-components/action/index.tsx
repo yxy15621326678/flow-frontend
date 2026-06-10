@@ -105,11 +105,8 @@ export const ActionTable: React.FC<ActionTableProps> = (props) => {
                             form.resetFields();
                             createCustomAction().then(res => {
                                 if (res.success) {
-                                    const scriptKey = res.data;
-                                    form.setFieldsValue({
-                                        script: scriptKey,
-                                        type: "CUSTOM",
-                                    })
+                                    const data = res.data;
+                                    form.setFieldsValue(data);
                                     setVisible(true);
                                 }
                             })

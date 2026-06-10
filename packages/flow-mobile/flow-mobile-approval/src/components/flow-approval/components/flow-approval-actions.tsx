@@ -1,24 +1,25 @@
-import React, {useState} from "react";
-import {MoreOutlined} from "@ant-design/icons";
-import {CustomStyleButton} from "@/components/flow-approval/components/custom-style-button";
-import {useLayoutPresenter} from "@/components/flow-approval/layout/hooks/use-layout-presenter";
-import {ActionSheet, Button, Space, Toast} from "antd-mobile";
-import {RevokeAction} from "@/components/flow-approval/components/action/revoke";
-import {UrgeAction} from "@/components/flow-approval/components/action/urge";
-import {ActionFactory} from "@/components/flow-approval/components/action/factory";
-import {EventBus, ObjectUtils} from "@coding-flow/flow-core";
-import {useApprovalContext} from "@coding-flow/flow-approval-presenter";
+import React, { useState } from "react";
+import { MoreOutlined } from "@ant-design/icons";
+import { CustomStyleButton } from "@/components/flow-approval/components/custom-style-button";
+import { useLayoutPresenter } from "@/components/flow-approval/layout/hooks/use-layout-presenter";
+import { ActionSheet, Button, Space, Toast } from "antd-mobile";
+import { RevokeAction } from "@/components/flow-approval/components/action/revoke";
+import { UrgeAction } from "@/components/flow-approval/components/action/urge";
+import { ActionFactory } from "@/components/flow-approval/components/action/factory";
+import { EventBus, ObjectUtils } from "@coding-flow/flow-core";
+import { useApprovalContext } from "@coding-flow/flow-approval-presenter";
 
-export const FlowApprovalActions = ()=>{
+export const FlowApprovalActions = () => {
 
-    const {state, context} = useApprovalContext();
+    const { state, context } = useApprovalContext();
     const presenter = useLayoutPresenter();
 
     const [moreVisible, setMoreVisible] = useState(false);
 
     const handlerAction = (id: string) => {
+        const presenter = context.getPresenter().getFlowActionPresenter();
+        const action = presenter.getAction(id);
         if (state.flow?.mergeable) {
-            const presenter = context.getPresenter().getFlowActionPresenter();
             const selectRecordIds = presenter.getSubmitRecordIds();
             const currentFormData = presenter.getCurrentFormData();
             if (ObjectUtils.isEmptyObject(currentFormData) && selectRecordIds.length == 0) {
@@ -26,7 +27,14 @@ export const FlowApprovalActions = ()=>{
                 return;
             }
         }
-        EventBus.getInstance().emit(id);
+        if (action) {
+            const triggerFrontEvent = action.triggerFrontEvent;
+            if (triggerFrontEvent) {
+                EventBus.getInstance().emit(triggerFrontEvent);
+            }
+        } else {
+            EventBus.getInstance().emit(id);
+        }
     }
 
     return (
@@ -50,7 +58,12 @@ export const FlowApprovalActions = ()=>{
                         <CustomStyleButton
                             key={index}
                             onClick={() => {
-                                handlerAction(action.id);
+                                const triggerFrontEvent = action.triggerFrontEvent;
+                                if (triggerFrontEvent) {
+                                    EventBus.getInstance().emit(triggerFrontEvent);
+                                } else {
+                                    handlerAction(action.id);
+                                }
                             }}
                             display={action.display}
                             title={action.title}
@@ -70,14 +83,14 @@ export const FlowApprovalActions = ()=>{
                 >
                     <Space>
                         <span>更多操作</span>
-                        <MoreOutlined/>
+                        <MoreOutlined />
                     </Space>
                 </Button>
             )}
 
 
-            <RevokeAction/>
-            <UrgeAction/>
+            <RevokeAction />
+            <UrgeAction />
 
             <ActionSheet
                 visible={moreVisible}

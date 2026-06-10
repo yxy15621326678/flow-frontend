@@ -1,8 +1,9 @@
 import React from "react";
-import {ApprovalPanel} from "@coding-flow/flow-mobile-approval";
+import { ApprovalPanel } from "@coding-flow/flow-mobile-approval";
 import { useLocation, useNavigate } from "react-router";
+import { EventBus } from "@coding-flow/flow-core";
 
-const ApprovalPage = ()=>{
+const ApprovalPage = () => {
 
     const location = useLocation();
     const workflowCode = location.state.workflowCode;
@@ -13,6 +14,15 @@ const ApprovalPage = ()=>{
     const handleClose = () => {
         navigate(-1);
     }
+
+    React.useEffect(() => {
+        EventBus.getInstance().on('compile', () => {
+            alert('compile')
+        });
+        return () => {
+            EventBus.getInstance().off('compile');
+        }
+    }, []);
 
     return (
         <ApprovalPanel

@@ -115,8 +115,12 @@ export interface FlowAction {
     display: FlowActionDisplay;
     // 是否启用
     enable: boolean;
-    // 自定义脚本
+    // 自定义脚本key
     script?: string;
+    // 触发类型，自定义脚本使用
+    triggerType?:string;
+    // 前端触发事件，自定义脚本使用
+    triggerFrontEvent?:string;
 }
 
 /**

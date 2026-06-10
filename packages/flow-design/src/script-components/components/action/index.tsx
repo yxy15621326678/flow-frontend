@@ -1,12 +1,12 @@
 import React from "react";
-import {ActionFormProps} from "@/script-components/typings";
-import { Form,Input,Row,Col } from "antd";
-import {ActionIcon} from "./icon";
-import {ActionStyle} from "./style";
-import {ActionFactory} from "@/script-components/components/action/components/factory";
+import { ActionFormProps } from "@/script-components/typings";
+import { Form, Input, Row, Col } from "antd";
+import { ActionIcon } from "./icon";
+import { ActionStyle } from "./style";
+import { ActionFactory } from "@/script-components/components/action/components/factory";
 
 
-export const ActionForm:React.FC<ActionFormProps> = (props)=>{
+export const ActionForm: React.FC<ActionFormProps> = (props) => {
 
     const type = props.form.getFieldValue("type");
 
@@ -24,7 +24,19 @@ export const ActionForm:React.FC<ActionFormProps> = (props)=>{
                 name={"id"}
                 hidden={true}
             >
-                <Input/>
+                <Input />
+            </Form.Item>
+            <Form.Item
+                name={"type"}
+                hidden={true}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item
+                name={"enable"}
+                hidden={true}
+            >
+                <Input />
             </Form.Item>
             <Row gutter={[8, 8]}>
                 <Col span={12}>
@@ -39,7 +51,7 @@ export const ActionForm:React.FC<ActionFormProps> = (props)=>{
                             }
                         ]}
                     >
-                        <Input placeholder={"请输入按钮名称"}/>
+                        <Input placeholder={"请输入按钮名称"} />
                     </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -47,7 +59,7 @@ export const ActionForm:React.FC<ActionFormProps> = (props)=>{
                         name={"icon"}
                         label={"按钮图标"}
                     >
-                        <ActionIcon/>
+                        <ActionIcon />
                     </Form.Item>
                 </Col>
                 <Col span={24}>
@@ -55,13 +67,13 @@ export const ActionForm:React.FC<ActionFormProps> = (props)=>{
                         name={"display"}
                         label={"按钮样式"}
                     >
-                        <ActionStyle/>
+                        <ActionStyle />
                     </Form.Item>
-                </Col>                
+                </Col>
             </Row>
 
             {FormAction && (
-                <FormAction {...props}/>
+                <FormAction {...props} />
             )}
         </Form>
     )

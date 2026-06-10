@@ -1,12 +1,10 @@
-import {actionOptions, ActionType, FlowAction} from "@coding-flow/flow-types";
-import {nanoid} from "nanoid";
-import {IdUtils} from "@/utils";
-import {FlowActionManager} from "./manager";
+import { FlowAction } from "@coding-flow/flow-types";
+import { FlowActionManager } from "./manager";
 
 export class FlowActionListPresenter {
     private readonly data: FlowAction[];
     private readonly onChange: (data: FlowAction[]) => void;
-    private readonly manager:FlowActionManager;
+    private readonly manager: FlowActionManager;
 
     public constructor(data: FlowAction[], onChange: (data: FlowAction[]) => void) {
         this.onChange = onChange;
@@ -14,7 +12,7 @@ export class FlowActionListPresenter {
         this.manager = new FlowActionManager(data);
     }
 
-    public getFlowActionManager(){
+    public getFlowActionManager() {
         return this.manager;
     }
 
@@ -40,7 +38,12 @@ export class FlowActionListPresenter {
     public update(action: any) {
         const actionId = action.id;
 
-        if (actionId) {
+        const actionIdList = this.data.map(action => action.id);
+
+        console.log('actionIdList:', actionIdList)
+        console.log('action:', action)
+
+        if (actionIdList.indexOf(actionId) > 0) {
             const data = this.data.map(item => {
                 if (item.id === actionId) {
                     return {
@@ -56,15 +59,11 @@ export class FlowActionListPresenter {
             });
             this.onChange(data);
         } else {
-            const custom = {
+            this.onChange([...this.data, {
                 ...action,
-                type: 'CUSTOM',
-                enable: true,
-                id: IdUtils.generateId(),
-            }
-            this.onChange([...this.data, custom]);
+                type: "CUSTOM"
+            }]);
         }
-
     }
 
 
