@@ -1,9 +1,9 @@
-import {DesignPanelApi, FlowNode, initStateData, State, TabPanelType} from "../types";
-import {Dispatch} from "@coding-flow/flow-core";
-import {FlowForm, FormActionContext} from "@coding-flow/flow-types";
-import {WorkflowFormManager} from "@/components/design-panel/manager/form";
-import {NodeConvertorManager, NodeManger} from "@/components/design-panel/manager/node";
-import {WorkflowConvertor} from "@/components/design-panel/presenters/convertor";
+import { DesignPanelApi, FlowNode, initStateData, State, TabPanelType } from "../types";
+import { Dispatch } from "@coding-flow/flow-core";
+import { FlowForm, FormActionContext } from "@coding-flow/flow-types";
+import { WorkflowFormManager } from "@/components/design-panel/manager/form";
+import { NodeConvertorManager, NodeManger } from "@/components/design-panel/manager/node";
+import { WorkflowConvertor } from "@/components/design-panel/presenters/convertor";
 
 export class Presenter {
 
@@ -103,6 +103,17 @@ export class Presenter {
         });
     }
 
+    public sort(formCode: string, fieldCode: string, order: number) {
+        const workflowFormManager = new WorkflowFormManager(this.state.workflow.form);
+        // 如何实现排序
+        const form = workflowFormManager.sortField(
+            formCode,
+            fieldCode,
+            order
+        );
+        this.updateWorkflowForm(form);
+    }
+
 
     public removeWorkflowFormField(formCode: string, fieldCode: string) {
         const workflowFormManager = new WorkflowFormManager(this.state.workflow.form);
@@ -140,7 +151,7 @@ export class Presenter {
         this.updateWorkflowForm(updatedForm);
     }
 
-    public async save(versionName?:string) {
+    public async save(versionName?: string) {
         const values = this.formActionContext.save() as any;
         this.updateWorkflow(values);
         const latest = {
@@ -157,7 +168,7 @@ export class Presenter {
         console.log('save latest:', apiData);
     }
 
-    public getNodeManager(){
+    public getNodeManager() {
         return new NodeManger(this.state.workflow.nodes || []);
     }
 

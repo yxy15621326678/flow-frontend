@@ -1,14 +1,14 @@
-import React, {useState} from "react";
-import {Table, TableProps} from "@coding-flow/flow-pc-ui";
-import {Button, Flex, Form, Popconfirm, Space,Typography} from "antd";
-import {dataTypeOptions,FormTypeContext} from "@coding-flow/flow-types";
-import {useDesignContext} from "@/components/design-panel/hooks/use-design-context";
-import {WorkflowFormManager} from "@/components/design-panel/manager/form";
-import {CloudUploadOutlined, DeleteOutlined, FolderAddOutlined, PlusOutlined} from "@ant-design/icons";
-import {FormFieldModal} from "./model";
+import React, { useState } from "react";
+import { Table, TableProps } from "@coding-flow/flow-pc-ui";
+import { Button, Flex, Form, Popconfirm, Space, Typography } from "antd";
+import { dataTypeOptions, FormTypeContext } from "@coding-flow/flow-types";
+import { useDesignContext } from "@/components/design-panel/hooks/use-design-context";
+import { WorkflowFormManager } from "@/components/design-panel/manager/form";
+import { CloudUploadOutlined, DeleteOutlined, FolderAddOutlined, PlusOutlined } from "@ant-design/icons";
+import { FormFieldModal } from "./model";
 import { SubFormModal } from "./sub-form";
 
-const {Title} = Typography
+const { Title } = Typography
 
 interface FormTableProps {
     name: string;
@@ -20,7 +20,7 @@ interface FormTableProps {
 export const FormTable: React.FC<FormTableProps> = (props) => {
 
     const name = props.name;
-    const {state, context} = useDesignContext();
+    const { state, context } = useDesignContext();
     const workflowFormManager = new WorkflowFormManager(state.workflow.form);
     const presenter = context.getPresenter();
     const [fieldForm] = Form.useForm();
@@ -48,7 +48,7 @@ export const FormTable: React.FC<FormTableProps> = (props) => {
             title: '字段类型',
             render: (value, record) => {
                 const type = FormTypeContext.getInstance().getType(value);
-                if(type){
+                if (type) {
                     return type.name;
                 }
                 return value
@@ -89,7 +89,7 @@ export const FormTable: React.FC<FormTableProps> = (props) => {
             dataIndex: 'attributes',
             title: '属性数量',
             render: (value) => {
-                return value?value.length:0
+                return value ? value.length : 0
             }
         },
         {
@@ -103,6 +103,12 @@ export const FormTable: React.FC<FormTableProps> = (props) => {
                             fieldForm.setFieldsValue(record);
                             setEditable(true);
                         }}>编辑</a>
+                        <a onClick={() => {
+                            presenter.sort(props.code, record.code, 1);
+                        }}>↑</a>
+                        <a onClick={() => {
+                            presenter.sort(props.code, record.code, -1);
+                        }}>↓</a>
                         <Popconfirm
                             title={"确认要删除该字段吗？"}
                             onConfirm={() => {

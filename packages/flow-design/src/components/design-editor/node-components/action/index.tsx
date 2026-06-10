@@ -75,6 +75,20 @@ export const ActionTable: React.FC<ActionTableProps> = (props) => {
                                 >
                                     编辑
                                 </a>
+                                <a
+                                    onClick={() => {
+                                        presenter.sort(record.id, -1)
+                                    }}
+                                >
+                                    ↑
+                                </a>
+                                <a
+                                    onClick={() => {
+                                        presenter.sort(record.id, 1)
+                                    }}
+                                >
+                                    ↓
+                                </a>
                                 {record.type === 'CUSTOM' && (
                                     <Popconfirm
                                         title={"确认删除吗？"}

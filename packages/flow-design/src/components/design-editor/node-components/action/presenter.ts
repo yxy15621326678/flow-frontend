@@ -30,6 +30,23 @@ export class FlowActionListPresenter {
     }
 
 
+    public sort(id: string, order: number) {
+        const index = this.data.findIndex(item => item.id === id);
+        if (index === -1) {
+            return;
+        }
+        const targetIndex = index + order;
+        // 边界检查
+        if (targetIndex < 0 || targetIndex >= this.data.length) {
+            return;
+        }
+        const data = [...this.data];
+        // 交换位置
+        [data[index], data[targetIndex]] = [data[targetIndex], data[index]];
+        this.onChange(data);
+    }
+
+
     public delete(id: string) {
         const data = this.data.filter(item => item.id !== id);
         this.onChange(data);
