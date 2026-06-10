@@ -111,6 +111,7 @@ export class Presenter {
             fieldCode,
             order
         );
+        console.log('sort:',form)
         this.updateWorkflowForm(form);
     }
 

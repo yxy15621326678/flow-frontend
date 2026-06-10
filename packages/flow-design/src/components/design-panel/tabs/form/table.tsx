@@ -104,10 +104,10 @@ export const FormTable: React.FC<FormTableProps> = (props) => {
                             setEditable(true);
                         }}>编辑</a>
                         <a onClick={() => {
-                            presenter.sort(props.code, record.code, 1);
+                            presenter.sort(props.code, record.code, -1);
                         }}>↑</a>
                         <a onClick={() => {
-                            presenter.sort(props.code, record.code, -1);
+                            presenter.sort(props.code, record.code, 1);
                         }}>↓</a>
                         <Popconfirm
                             title={"确认要删除该字段吗？"}
