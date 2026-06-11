@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
     "commons@coding-marketplace": true,
-    "frontend@coding-marketplace": true
+    "frontend@coding-marketplace": true,
+    "pkr@pkr-marketplace": true
   }
 }

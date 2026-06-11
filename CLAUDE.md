@@ -1,194 +1,95 @@
 # CLAUDE.md
 
-本文件为 Claude Code (claude.ai/code) 在本项目中工作时提供指导。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 项目概述
 
-flow-frontend 是一个企业级工作流引擎的前端框架，提供可视化流程设计、动态表单配置、多节点类型流转以及脚本扩展功能。项目采用前后端分离架构，支持 PC 端和移动端客户端。后端代码见 https://github.com/codingapi/flow-engine
+flow-frontend 是企业级工作流引擎的前端框架，提供可视化流程设计、动态表单配置、多节点类型流转以及脚本扩展功能。采用 pnpm monorepo 架构，支持 PC 端和移动端。后端代码见 https://github.com/codingapi/flow-engine
 
-
-### 前端 (React/pnpm)
+## 常用命令
 
 ```bash
-# 安装依赖（使用 pnpm，而非 npm）
-cd flow-frontend && pnpm install
-
-# 构建所有包
-pnpm run build
-
-# 构建 PC 端所有组件库
-pnpm run build:flow-pc
-
-# 构建移动端所有组件库
-pnpm run build:flow-mobile
-
-# 构建特定包
-pnpm run build:flow-core              # 核心框架库
-pnpm run build:flow-types             # 类型定义库
-pnpm run build:flow-icons             # 图标库
-pnpm run build:flow-approval-presenter # 审批展示器框架
-pnpm run build:flow-design            # 流程设计器组件库
-pnpm run build:flow-pc-ui             # PC 端基础 UI 组件库
-pnpm run build:flow-pc-form           # PC 端表单组件库
-pnpm run build:flow-pc-approval       # PC 端审批组件库
-pnpm run build:flow-mobile-ui         # 移动端基础 UI 组件库
-pnpm run build:flow-mobile-form       # 移动端表单组件库
-pnpm run build:flow-mobile-approval   # 移动端审批组件库
-
-# 构建特定应用
-pnpm run build:app-pc
-pnpm run build:app-mobile
+# 安装依赖（使用 pnpm，非 npm）
+pnpm install
 
 # 开发模式
-pnpm run dev:app-pc     # PC 端应用
-pnpm run dev:app-mobile # 移动端应用
+pnpm run dev:app-pc       # PC 端应用
+pnpm run dev:app-mobile   # 移动端应用
+pnpm run watch:flow-core  # 监听模式编译（各包均有 watch 命令）
+
+# 构建
+pnpm run build            # 构建所有包
+pnpm run build:flow-pc    # 构建 PC 端所有组件库
+pnpm run build:flow-mobile # 构建移动端所有组件库
+pnpm run build:flow-core  # 构建单个包（各包均有 build:<name> 命令）
+
+# 测试（框架：@rstest/core，环境：jsdom）
+pnpm run test             # 运行所有测试
+pnpm run test:flow-core   # 运行特定包的测试
+pnpm run test:flow-design
+pnpm run test:flow-pc     # 运行 PC 端所有测试
+pnpm run test:flow-mobile # 运行移动端所有测试
+
+# 运行单个测试文件
+cd packages/flow-core && npx rstest tests/unit/xxx.test.ts
 ```
 
 ## 架构
 
-### 后端分层架构（8 层架构）
-
-1. **工作流层** - 流程定义
-2. **节点层** - 19 种节点类型（StartNode、EndNode、ApprovalNode、HandleNode、NotifyNode、ManualNode、RouterNode、SubProcessNode、DelayNode、TriggerNode、ConditionNode、ParallelNode、InclusiveNode 及其分支变体，含 Else 分支节点）
-3. **动作层** - 8 种动作类型（Pass、Reject、Save、AddAudit、Delegate、Return、Transfer、Custom）
-4. **记录层** - 流程实例记录
-5. **会话层** - 会话管理
-6. **管理器层** - 业务管理器（NodeStrategyManager、OperatorManager、ActionManager 等）
-7. **策略层** - 策略驱动的配置
-8. **脚本层** - Groovy 脚本运行时
-
-### 设计模式
-
-- **建造者模式** - WorkflowBuilder、NodeBuilder、FormMetaBuilder
-- **工厂模式** - FlowActionFactory
-- **策略模式** - NodeStrategy、WorkflowStrategy
-- **模板方法模式** - BaseAction、BaseNodeBuilder
-- **责任链模式** - 动作执行链
-- **组合模式** - 带 blocks 的节点层级结构
-
-### 模块结构
-
-#### 后端模块
-
-| 模块 | 描述 |
-|--------|-------------|
-| `flow-engine-framework` | 核心工作流引擎框架（节点/动作/策略/脚本/服务） |
-| `flow-engine-starter` | Spring Boot 自动配置入口 |
-| `flow-engine-starter-api` | REST API 层（FlowRecordController、WorkflowController） |
-| `flow-engine-starter-infra` | 持久化层（JPA 实体、8 个仓储实现、达梦方言） |
-| `flow-engine-starter-query` | 查询层（FlowRecordQueryController、WorkflowQueryController） |
-| `flow-engine-example` | 示例应用（H2/达梦、JWT 认证、端口 8090） |
-
-#### 前端模块（位于 flow-frontend 仓库）
-
-**核心模块**：
-
-| 模块 | 描述 | 依赖 |
-|--------|-------------|------|
-| `flow-core` | 核心框架库（HTTP、Hooks、Presenter 等），不包含 UI 组件 | 无 |
-| `flow-types` | TypeScript 类型定义（流程实例、表单、审批等业务类型） | flow-core |
-| `flow-icons` | 图标库 | flow-core |
-| `flow-approval-presenter` | 审批展示器框架（基于 Redux 的状态管理） | flow-core, flow-types |
-| `flow-design` | 流程设计器组件库（节点配置、属性面板、脚本配置等） | flow-core, flow-types, flow-icons, flow-pc-ui |
-
-**PC 端模块**：
-
-| 模块 | 描述 | 依赖 |
-|--------|-------------|------|
-| `flow-pc-ui` | PC 端基础 UI 组件库（按钮、输入框等原子组件） | flow-core |
-| `flow-pc-form` | PC 端表单组件库（表单设计器、表单渲染等） | flow-core, flow-types |
-| `flow-pc-approval` | PC 端审批组件库（待办/已办/审批处理等） | flow-core, flow-types, flow-icons, flow-approval-presenter, flow-pc-ui, flow-pc-form |
-
-**移动端模块**：
-
-| 模块 | 描述 | 依赖 |
-|--------|-------------|------|
-| `flow-mobile-ui` | 移动端基础 UI 组件库 | flow-core |
-| `flow-mobile-form` | 移动端表单组件库 | flow-core, flow-types |
-| `flow-mobile-approval` | 移动端审批组件库 | flow-core, flow-types, flow-icons, flow-approval-presenter, flow-mobile-ui, flow-mobile-form |
-
-**前端模块依赖关系**：
+### 模块依赖关系
 
 ```
 【基础层】
-flow-core (无UI，基础框架)
+flow-core (无UI：HTTP客户端、Presenter模式、EventBus、ViewBindPlugin、Groovy工具)
+    ├──→ flow-types (全局类型定义：FlowForm、FlowAction、NodeType 等)
     ├──→ flow-icons (图标库)
-    ├──→ flow-approval-presenter (审批展示器框架)
-    ├──→ flow-types (类型定义)
-    ├──→ flow-pc-ui (PC 端基础 UI 组件库)
-    └──→ flow-mobile-ui (移动端基础 UI 组件库)
+    └──→ flow-approval-presenter (审批展示器框架：Redux 状态管理)
 
-【类型定义层】
-flow-types (类型定义)
-    ├──→ flow-pc-form (PC 端表单组件库)
-    └──→ flow-mobile-form (移动端表单组件库)
+【PC 端】                         【移动端】
+flow-pc-ui (antd)                 flow-mobile-ui (antd-mobile)
+    └→ flow-pc-form                   └→ flow-mobile-form
+         └→ flow-pc-approval               └→ flow-mobile-approval
 
-【PC 端依赖链】
-flow-pc-ui
-    └──→ flow-pc-form
-              └──→ flow-pc-approval (PC 端审批组件库)
-                        ├──→ flow-icons
-                        └──→ flow-approval-presenter
+flow-design (流程设计器，依赖 flow-pc-ui + @flowgram.ai)
 
-flow-design (流程设计器)
-    ├──→ flow-pc-ui
-    ├──→ flow-icons
-    └──→ flow-types
-
-app-pc
-    ├──→ flow-design
-    ├──→ flow-pc-approval
-    └──→ flow-pc-form
-
-【移动端依赖链】
-flow-mobile-ui
-    └──→ flow-mobile-form
-              └──→ flow-mobile-approval (移动端审批组件库)
-                        ├──→ flow-icons
-                        └──→ flow-approval-presenter
-
-app-mobile
-    ├──→ flow-mobile-approval
-    └──→ flow-mobile-ui
+app-pc (依赖 flow-design + flow-pc-approval + flow-pc-form)
+app-mobile (依赖 flow-mobile-approval + flow-mobile-ui)
 ```
 
-**依赖说明**：
-- `flow-core` 是最底层模块，所有其他模块都依赖它
-- `flow-icons` 和 `flow-approval-presenter` 被 `flow-pc-approval` 和 `flow-mobile-approval` 共用
-- `flow-design` 依赖 `flow-pc-ui`（而非 flow-pc-approval），因为设计器使用 PC 端基础 UI 组件
-- `app-pc` 直接依赖 `flow-design`、`flow-pc-approval` 和 `flow-pc-form`
-- `app-mobile` 直接依赖 `flow-mobile-approval` 和 `flow-mobile-ui`
+### 外部依赖（非 workspace 包）
 
-**模块划分原则**：
+- `@coding-form/form-engine` ^0.0.18 — 表单引擎（FormView、createFormInstance、registerFormItems）
+- `@coding-script/script-engine` ^0.0.9 — 脚本引擎（GroovyScriptConvertorUtil）
+- `@flowgram.ai/fixed-layout-editor` 1.0.8 — 流程编辑器（FlowNodeRegistry、FlowNodeEntity）
 
-- **flow-core**：全局框架依赖，只包含与 UI 无关的基础能力（HTTP、状态管理、工具函数等）
-- **flow-types**：全局类型定义，包含流程审批相关的业务类型（移动端和 PC 端共用）
-- **flow-icons**：图标库，提供统一的图标组件
-- **flow-approval-presenter**：审批展示器框架，基于 Redux 的状态管理
-- **flow-design**：流程设计器功能，包含节点配置、属性面板、脚本配置等
-- **flow-pc-***：PC 端专用组件库，依赖 Ant Design
-- **flow-mobile-***：移动端专用组件库，依赖 Ant Design Mobile
+### 核心架构模式
 
-#### 前端应用
+**Presenter 模式** — 业务逻辑与视图分离的核心机制：
 
-| 应用 | 描述 |
-|--------|-------------|
-| `app-pc` | PC 端应用 |
-| `app-mobile` | 移动端应用 |
+- `BasePresenter<S, M>`（flow-core/presenter.ts）：封装 state + dispatch + model 三要素
+- `PresenterHooks.create()`（flow-core/hooks.ts）：桥接 Presenter 与 React useState，自动 syncState
+- `Dispatch<T>`（flow-core/dispatch.ts）：状态更新函数类型，支持直接赋值和函数式更新
+- 各模块通过 `ContextScope` 类封装 Presenter 并注入 React Context
+
+**ViewBindPlugin** — 视图动态绑定（flow-core/view-plugin.ts）：
+- 单例模式，通过 `register(name, component)` / `get(name)` 实现组件的运行时注册与获取
+- 设计器插件体系通过此机制注册节点视图组件（ConditionViewPlugin、RouterViewPlugin 等）
+
+**ActionFactory** — 动作工厂（flow-pc-approval、flow-mobile-approval、flow-design 各有一份）：
+- 单例模式，按 ActionType（PASS/REJECT/SAVE/ADD_AUDIT/DELEGATE/RETURN/TRANSFER/CUSTOM）注册对应 React 组件
+- PC 端和移动端各自实现不同的组件
+
+**FlowNodeRegistry** — 节点注册机制（flow-design）：
+- 19 种节点类型通过 `FlowNodeRegistry` 接口定义元数据并注册到 Flowgram 编辑器
+- 主体节点（Start/End/Approval/Handle/Router/Condition/Parallel 等 13 种）+ 分支节点（block 类型 6 种）
+
+**Redux Store 规范** — 各模块统一遵循的 Store 创建模式：
+- `createSlice` + 唯一 `updateState` reducer + `immer.original()` + `Object.assign`
+- 详见 `docs/conventions/flow-design/redux-store.md`
 
 ### 技术栈
 
-- **后端**：Java 17、Spring Boot 3.5.9、Spring Data JPA、Groovy、JJWT、Fastjson 2、Apache Commons、H2/达梦数据库
-- **前端**：React 18、TypeScript、pnpm、Rsbuild/Rslib、Ant Design（PC）、Ant Design Mobile（移动端）、Redux Toolkit、Flowgram、CodeMirror
-
-## 关键包
-
-- `com.codingapi.flow.node` - 节点实现（19 种类型）
-- `com.codingapi.flow.action` - 动作实现（8 种类型）
-- `com.codingapi.flow.strategy` - 策略接口和实现
-- `com.codingapi.flow.repository` - 数据访问层
-- `com.codingapi.flow.service` - 业务服务层
-- `com.codingapi.flow.script` - Groovy 脚本运行时
+React 18、TypeScript 5、pnpm 10、Rsbuild/Rslib（构建）、@rstest/core（测试）、Ant Design 6（PC）、Ant Design Mobile 5（移动端）、Redux Toolkit 2、Flowgram.ai 1.0.8、CodeMirror 6
 
 ## 开发规范
 
@@ -233,17 +134,15 @@ app-mobile
 - `tsconfig.json` 开启 `strict` 模式
 - **禁止滥用 `any`**，类型不确定时使用 `unknown` 或设计更精确的类型
 
-**单元测试强制：**
+**单元测试：**
 
-- 每个 package 必须有 `tests/unit/` 目录
-- 测试文件命名：`*.test.ts` 或 `*.test.tsx`
-- CI 失败条件：任一 package 单测不通过 或 关键路径覆盖率下降
-- 测试框架：`@rstest/core`
+- 测试文件放在 `tests/` 目录下，命名 `*.test.ts` / `*.test.tsx`
+- 测试框架：`@rstest/core`（详见 TDD 开发规范章节）
 
 **路径别名：**
 
 - 每个 package 内部 `src/` 目录下的依赖一律使用 `@/` alias
-- 通过 `tsconfig.json` 的 `paths` 配置 + `vitest.config.ts` 的 `resolve.alias` 配置
+- 通过 `tsconfig.json` 的 `paths` 配置 + `rstest.config.ts` 的 `resolve.alias` 配置
 - **禁止使用相对路径 `../../` 跨层引用**
 
 ```typescript
@@ -260,66 +159,24 @@ import { SomeUtil } from '../../../src/components/...';
 
 **跨 package 依赖：**
 
-- 通过 `workspace:*` 协议声明依赖（如 `"@flow-engine/core": "workspace:*"`）
-- import 时使用完整的 package 名称（如 `import { ViewBindPlugin } from "@flow-engine/flow-core"`）
+- 通过 `workspace:*` 协议声明依赖（如 `"@coding-flow/flow-core": "workspace:*"`）
+- import 时使用完整的 package 名称（如 `import { ViewBindPlugin } from "@coding-flow/flow-core"`）
 - **不得用相对路径跨 package 引用**
-
-```json
-// package.json 示例
-{
-  "dependencies": {
-    "@flow-engine/flow-core": "workspace:*",
-    "@flow-engine/flow-types": "workspace:*"
-  }
-}
-```
 
 ```typescript
 // ✅ 正确：使用完整 package 名称
-import { ViewBindPlugin } from "@flow-engine/flow-core";
-import { GroovyVariableMapping } from "@flow-engine/flow-types";
+import { ViewBindPlugin } from "@coding-flow/flow-core";
+import { FlowForm, FormActionContext } from "@coding-flow/flow-types";
 
 // ❌ 错误：不得用相对路径跨 package 引用
 import { SomeUtil } from '../../../packages/flow-core/src/...';
 ```
 
-### 面向对象开发规范
+### 代码风格
 
-TypeScript 代码根据类型和复杂度选择合适的开发风格：
-
-- **Hooks**：使用函数式方式定义，遵循 React Hooks 规范
-- **业务处理类**（Service、Context、Converter、Utils 等）：根据复杂度选择，复杂逻辑使用 class 便于扩展和维护，简单功能可用函数式
-- **工具函数**：根据场景选择，复杂逻辑使用 class，简单工具可用函数式
-
-```typescript
-// ✅ 正确：Hooks 使用函数式定义
-export const useFlowDesigner = () => {
-  const [nodes, setNodes] = useState<Node[]>([]);
-  // ...
-  return { nodes, setNodes };
-};
-
-// ✅ 正确：复杂业务逻辑使用 class 便于扩展
-export class GroovySyntaxConverter {
-  private adapters: Map<ScriptType, ScriptAdapter> = new Map();
-
-  public registerAdapter(adapter: ScriptAdapter): void {
-    this.adapters.set(adapter.scriptType, adapter);
-  }
-
-  public toScript(...): string { ... }
-}
-
-// ✅ 正确：简单的工具函数可用函数式
-export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString();
-};
-
-// ✅ 正确：简单的业务处理也可用函数式
-export const createDefaultMappings = (): GroovyVariableMapping[] => {
-  return [...];
-};
-```
+- **Hooks**：函数式定义，遵循 React Hooks 规范
+- **Presenter / Manager / Convertor / Factory 等业务类**：使用 `class`，便于扩展和组合
+- **简单工具函数**：可用函数式（`export const fn = () => {}`）
 
 ### Git 工作流
 
@@ -335,55 +192,59 @@ feature/{task-name}  →  PR  →  dev  →  （用户审核）  →  main
 
 ### TDD 开发规范
 
-本项目前端采用 TDD（测试驱动开发）模式，基于 `@rstest/core` 测试框架。
+本项目采用 TDD 模式，基于 `@rstest/core` 测试框架（jsdom 环境，jest-dom matchers）。
 
-**测试文件位置：**
-
-- 单元测试文件放在 `tests/` 目录下，与源代码同级的 `tests/` 目录中
-- 测试文件命名：`*.test.ts` 或 `*.test.tsx`
-
-**测试编写流程：**
-
-1. **Red（红灯）**：先编写测试用例，明确预期行为
-2. **Green（绿灯）**：编写最小代码使测试通过
-3. **Refactor（重构）**：优化代码结构，运行全部测试确认不回归
-
-**测试用例设计要求：**
-
-- 每个测试用例需明确：测试目标、前置条件、执行步骤、期望断言
-- 优先测试核心业务逻辑（Presenter、工具类、转换函数）
-- UI 组件测试可选，主要保证核心逻辑的正确性
-
-**测试命令：**
-
-```bash
-# 运行所有测试
-pnpm test
-
-# 运行特定包的测试
-pnpm test --filter=flow-core
-pnpm test --filter=flow-design
-
-# 运行特定测试文件
-pnpm test -- xxx.test.ts
-```
-
-**示例（基于 flow-core 的 groovy 测试）：**
+- 测试文件放在 `tests/` 目录下，命名 `*.test.ts` 或 `*.test.tsx`
+- 优先测试核心业务逻辑（Presenter、工具类、转换函数），UI 组件测试可选
+- 每个包的 `rstest.config.ts` 配置 `@/` → `src/` 路径别名
+- 测试入口统一使用 `rstest.setup.ts` 注入 jest-dom matchers
 
 ```typescript
 // packages/flow-core/tests/groovy.test.ts
-import {describe, expect, it} from '@rstest/core';
-import {GroovyScriptConvertorUtil} from "@/groovy";
+import { describe, expect, it } from '@rstest/core';
+import { GroovyScriptConvertorUtil } from "@/groovy";
 
-describe('GroovyScriptUtil', () => {
-    describe('getReturnScript', () => {
-        it('get groovy script return data', () => {
-            const script = `...`;
-            const result = GroovyScriptConvertorUtil.getReturnScript(script);
-            expect(result).toEqual('expected value');
-        });
+describe('GroovyScriptConvertorUtil', () => {
+    it('getReturnScript', () => {
+        const result = GroovyScriptConvertorUtil.getReturnScript('def run() { return 1 + 1 }');
+        expect(result).toEqual('1 + 1');
     });
 });
 ```
 
+<!-- PKR-START -->
+## PKR 知识查阅（编码前必须）
 
+进入计划模式或实现功能前，**必须按以下优先级查阅**：
+
+### ⚠️ 开发规范（最高优先级，必须严格遵守）
+
+1. [docs/conventions/index.md](./docs/conventions/index.md) — 项目开发规范
+
+**规范具有最高优先级。** 所有代码必须遵循已注册的 Convention，违反规范的代码视为缺陷。
+编码前必须逐条检查相关规范，确保命名、结构、模式完全符合要求。
+
+### 已有能力（必须复用，禁止重复实现）
+
+2. [docs/capabilities/index.md](./docs/capabilities/index.md) — 已有可复用能力
+
+已有能力必须复用，禁止重新实现。优先组合已有能力解决问题。
+
+### 计划模式约束
+
+计划方案中必须包含：
+1. **遵循了哪些规范** — 列出遵守的 Convention（必须首先说明）
+2. **复用了哪些已有能力** — 列出从 PKR 中找到并复用的 Capability
+3. **是否有新增能力** — 如果本次开发产生了可复用的新能力，完成后通过 `/pkr-add` 注册
+
+### 知识管理命令
+
+| 命令 | 用途 |
+|------|------|
+| `/pkr-init` | 扫描项目，发现候选能力和规范（自动跳过已有文档） |
+| `/pkr-sync` | 全量同步，对比代码变更 |
+| `/pkr-update <module>/<name> [desc]` | 单项更新，可带描述指导更新 |
+| `/pkr-add <module>/<name> <desc>` | 从代码/框架扫描注册 |
+| `/pkr-add plan <module>/<name> <desc>` | 注册计划中的能力 |
+| `/pkr-export <module> ...` | 导出模块文档供其他项目使用 |
+<!-- PKR-END -->
