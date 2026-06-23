@@ -39,7 +39,7 @@ export const FormDate: React.FC<FormItemProps> = (props) => {
     const rules = props.required ? [
         {
             required: props.required,
-            message: `${props.name}不能为空`
+            message: `${props.label}不能为空`
         }
     ] : [];
 
