@@ -31,6 +31,8 @@ export const FlowApprovalActions = () => {
             const triggerFrontEvent = action.triggerFrontEvent;
             if (triggerFrontEvent) {
                 EventBus.getInstance().emit(triggerFrontEvent);
+            } else {
+                EventBus.getInstance().emit(id);
             }
         } else {
             EventBus.getInstance().emit(id);
