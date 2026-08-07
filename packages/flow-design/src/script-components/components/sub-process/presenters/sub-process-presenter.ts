@@ -1,4 +1,8 @@
-import {SubProcessViewProps} from "@/script-components/components/sub-process/typings";
+import {
+    SubProcessConfig,
+    SubProcessFormValues,
+    SubProcessViewProps,
+} from "@/script-components/components/sub-process/typings";
 import {GroovyScriptConvertorUtil} from "@coding-flow/flow-core";
 
 
@@ -6,42 +10,93 @@ export class SubProcessPresenter {
 
     private readonly props: SubProcessViewProps;
 
+    /**
+     * 自身最后一次生成的脚本。
+     * 用于区分"自身编辑触发的脚本变更"与"外部脚本变更"，
+     * 避免编辑回填表单后再次重置表单，导致输入时表单自动刷新。
+     */
+    private lastEmittedScript?: string;
+
     constructor(props: SubProcessViewProps) {
         this.props = props;
     }
 
-    public parserScript(value: string) {
-        const meta = GroovyScriptConvertorUtil.getScriptMeta(value);
-        if (meta) {
-            return JSON.parse(meta);
+    /**
+     * 判断脚本变更是否来自外部（非自身编辑产生）。
+     * 仅外部变更才需要将脚本解析结果回填到表单。
+     *
+     * @param value 当前脚本内容
+     */
+    public isExternalChange(value: string | undefined): boolean {
+        if (!value) {
+            return false;
         }
-        return {};
+        return value !== this.lastEmittedScript;
     }
 
-    public updateScript(values: any) {
-        this.props.onChange(this.toScript(values));
+    public parserScript(value: string): SubProcessFormValues {
+        const meta = GroovyScriptConvertorUtil.getScriptMeta(value);
+        if (!meta) {
+            return {processes: []};
+        }
+        const parsed: unknown = JSON.parse(meta);
+        if (!this.isRecord(parsed)) {
+            return {processes: []};
+        }
+        if (Array.isArray(parsed.processes)) {
+            return {processes: parsed.processes.filter(this.isSubProcessConfig)};
+        }
+        return this.isSubProcessConfig(parsed)
+            ? {processes: [parsed]}
+            : {processes: []};
     }
 
-    private toFormData(values: any) {
-        if (values && values?.formData) {
-            const formData = JSON.parse(values.formData);
-            const data = formData.dataBody?.data;
-            if(data){
-                return JSON.stringify(data);
+    public updateScript(values: SubProcessFormValues) {
+        const script = this.toScript(values);
+        this.lastEmittedScript = script;
+        this.props.onChange(script);
+    }
+
+    private toFormData(config: SubProcessConfig): string {
+        if (config.formData) {
+            const formData: unknown = JSON.parse(config.formData);
+            if (this.isRecord(formData) && this.isRecord(formData.dataBody)) {
+                const data = formData.dataBody.data;
+                if (data) {
+                    return JSON.stringify(data);
+                }
             }
         }
         return '';
     }
 
-    private toScript(values: any) {
+    private toScript(values: SubProcessFormValues): string {
         const meta = JSON.stringify(values);
-        const formData = this.toFormData(values);
+        const requests = values.processes.map(config => {
+            const formData = this.toFormData(config);
+            return `request.toCreateRequest('${config.workId}', ${config.operatorId}, '${config.actionId}', '${formData}')`;
+        }).join(',\n            ');
         return `
         // @SCRIPT_TITLE 子流程配置
         // @SCRIPT_META ${meta} 
         def run(request){
-            return request.toCreateRequest('${values.workId}', ${values.operatorId},'${values.actionId}', '${formData}');
+            return [
+                ${requests}
+            ];
         }`;
     }
 
+    private isRecord(value: unknown): value is Record<string, unknown> {
+        return typeof value === 'object' && value !== null;
+    }
+
+    private isSubProcessConfig = (value: unknown): value is SubProcessConfig => {
+        return this.isRecord(value)
+            && (value.workId === undefined || typeof value.workId === 'string')
+            && (value.actionId === undefined || typeof value.actionId === 'string')
+            && (value.operatorId === undefined
+                || typeof value.operatorId === 'string'
+                || typeof value.operatorId === 'number')
+            && (value.formData === undefined || typeof value.formData === 'string');
+    };
 }
